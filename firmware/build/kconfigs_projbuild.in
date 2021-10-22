@@ -1,0 +1,5 @@
+source "C:/Project/IDF/esp-idf/components/app_update/Kconfig.projbuild"
+source "C:/Project/IDF/esp-idf/components/bootloader/Kconfig.projbuild"
+source "C:/Project/IDF/esp-idf/components/esptool_py/Kconfig.projbuild"
+source "C:/Project/IDF/esp-idf/components/partition_table/Kconfig.projbuild"
+source "C:/Project/SmartLock/SmartLockProject/Smart-Lock/firmware/main/Kconfig.projbuild"

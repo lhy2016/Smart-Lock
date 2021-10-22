@@ -1,0 +1,20 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "C:/Project/IDF/esp-idf/components/bootloader/subproject",
+    "build_dir":          "C:/Project/SmartLock/SmartLockProject/Smart-Lock/firmware/build/bootloader",
+    "config_file":        "C:/Project/SmartLock/SmartLockProject/Smart-Lock/firmware/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "v4.1-dirty",
+    "target":             "esp32",
+    "phy_data_partition": "",
+    "monitor_baud" :      "115200",
+    "monitor_toolprefix": "xtensa-esp32-elf-",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "C:/Project/IDF/esp-idf/components/efuse/Kconfig;C:/Project/IDF/esp-idf/components/esp32/Kconfig;C:/Project/IDF/esp-idf/components/esp_common/Kconfig;C:/Project/IDF/esp-idf/components/log/Kconfig;C:/Project/IDF/esp-idf/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "C:/Project/IDF/esp-idf/components/bootloader/Kconfig.projbuild;C:/Project/IDF/esp-idf/components/esptool_py/Kconfig.projbuild;C:/Project/IDF/esp-idf/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32", "esp_common", "esp_rom", "esptool_py", "log", "main", "micro-ecc", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "C:/Project/IDF/esp-idf/components/bootloader", "C:/Project/IDF/esp-idf/components/bootloader_support", "C:/Project/IDF/esp-idf/components/efuse", "C:/Project/IDF/esp-idf/components/esp32", "C:/Project/IDF/esp-idf/components/esp_common", "C:/Project/IDF/esp-idf/components/esp_rom", "C:/Project/IDF/esp-idf/components/esptool_py", "C:/Project/IDF/esp-idf/components/log", "C:/Project/IDF/esp-idf/components/bootloader/subproject/main", "C:/Project/IDF/esp-idf/components/bootloader/subproject/components/micro-ecc", "C:/Project/IDF/esp-idf/components/partition_table", "C:/Project/IDF/esp-idf/components/soc", "C:/Project/IDF/esp-idf/components/spi_flash", "C:/Project/IDF/esp-idf/components/xtensa", "" ]
+}
