@@ -10,7 +10,7 @@ MQTT_CLIENT_TOPICS = [  # topic, QoS
     (MQTT_SERVO_TOPIC, 0),
 ]
 
-def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, client_id: str = "", cb_connect: Callable=None, ca_path="", cert_path="", key_path=""):
+def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, client_id: str = "", cb_connect: Callable = None, ca_path: str = "", cert_path: str = "", key_path: str = ""):
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -28,7 +28,8 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, cli
         pass
 
     def on_publish(client, obj, mid):
-        print("mid: " + str(mid))
+        # print("mid: " + str(mid))
+        pass
     
     # def on_subscribe(client, obj, mid, granted_qos):
     #     print("Subscribed: " + str(mid) + " " + str(granted_qos))
