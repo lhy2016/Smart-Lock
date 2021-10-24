@@ -2,7 +2,7 @@
 import paho.mqtt.client as mqtt
 import os
 import urllib.parse as urlparse
-from core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC, MQTT_BROKER, MQTT_BROKER_PORT
+from core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC, MQTT_BROKER, MQTT_BROKER_PORT, MQTT_URL
 from typing import Callable
 
 MQTT_CLIENT_TOPICS = [  # topic, QoS
@@ -10,7 +10,7 @@ MQTT_CLIENT_TOPICS = [  # topic, QoS
     (MQTT_SERVO_TOPIC, 0),
 ]
 
-def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, client_id: str = "", cb_connect: Callable = None, ca_path: str = "", cert_path: str = "", key_path: str = ""):
+def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqtt_url=MQTT_URL ,client_id: str = "", cb_connect: Callable = None, ca_path: str = "", cert_path: str = "", key_path: str = ""):
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -48,7 +48,7 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, cli
         import ssl
         client.tls_set(caPath, certfile=certPath, keyfile=keyPath, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
         
-    url_str = os.environ.get('CLOUDMQTT_URL', 'mqtt://localhost:1883')
+    url_str = mqtt_url
     url = urlparse.urlparse(url_str)
     client.username_pw_set(url.username, url.password)
     client.on_connect = on_connect
