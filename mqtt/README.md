@@ -26,13 +26,21 @@ there are two topics now:
 - esp32/servo
 
 ## Manually testing the server:
-### establish a subscriber
+### start a server:
 
-`mosquitto_sub -d -t esp32/camera`
+`mosquitto`
 
-### then establish a publish a message to the same topic:
+### In another terminal, establish a subscriber
+
+`python3 subscriber.py`
+
+### In another terminal, establish a publish message:
 
 `mosquitto_pub -d -t esp32/camera -m "Hello world!"`
+
+### In another terminal,establish another subscriber:
+
+`mosquitto_sub -d -t esp32/servo`
 
 ## Development
 ### Change the following file for publish messages
