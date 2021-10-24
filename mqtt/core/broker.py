@@ -28,7 +28,7 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, cli
         pass
 
     def on_publish(client, obj, mid):
-        # print("mid: " + str(mid))
+        print("mid: " + str(mid))
         pass
     
     # def on_subscribe(client, obj, mid, granted_qos):
