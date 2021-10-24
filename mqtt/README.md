@@ -1,4 +1,4 @@
-Instructions:
+# Instructions:
 
 `chmod +x installMQTTNano.sh`
 
@@ -25,10 +25,20 @@ there are two topics now:
 - esp32/camera
 - esp32/servo
 
-Change the following file for publish messages
+## Manually testing the server:
+### establish a subscriber
+
+`mosquitto_sub -d -t esp32/camera`
+
+### then establish a publish a message to the same topic:
+
+`mosquitto_pub -d -t esp32/camera -m "Hello world!"`
+
+## Development
+### Change the following file for publish messages
 
 subscriber.py
 
-Configuration for topics and ip address etc.:
+## Configuration for topics and ip address etc.:
 
 vim ./core/config.py
