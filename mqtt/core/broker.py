@@ -10,7 +10,7 @@ MQTT_CLIENT_TOPICS = [  # topic, QoS
     (MQTT_SERVO_TOPIC, 0),
 ]
 
-def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqtt_url=MQTT_URL ,client_id: str = "", cb_connect: Callable = None, ca_path: str = "", cert_path: str = "", key_path: str = ""):
+def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqtt_url: str = MQTT_URL, client_id: str = "", cb_connect: Callable = None, ca_path: str = "", cert_path: str = "", key_path: str = ""):
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -47,7 +47,7 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqt
     if ca_path and cert_path and key_path:
         import ssl
         client.tls_set(caPath, certfile=certPath, keyfile=keyPath, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
-        
+    
     url_str = mqtt_url
     url = urlparse.urlparse(url_str)
     client.username_pw_set(url.username, url.password)
@@ -57,5 +57,6 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqt
     # client.on_subscribe = on_subscribe
     client.on_disconnect = on_disconnect
     # client.on_log = on_log
-    client.connect(MQTT_BROKER, MQTT_BROKER_PORT)
+    broker_port=int(broker_port)
+    client.connect(broker_ip, broker_port)
     return client
