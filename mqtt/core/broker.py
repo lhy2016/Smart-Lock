@@ -5,14 +5,12 @@ import urllib.parse as urlparse
 from core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC, MQTT_BROKER, MQTT_BROKER_PORT
 from typing import Callable
 
-MQTT_BROKER, MQTT_BROKER_PORT = "localhost", 1883
-
 MQTT_CLIENT_TOPICS = [  # topic, QoS
     (MQTT_CAMERA_TOPIC, 0),
     (MQTT_SERVO_TOPIC, 0),
 ]
 
-def connect_mqtt_broker(client_id: str = "", cb_connect: Callable=None):
+def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, client_id: str = "", cb_connect: Callable=None, ca_path="", cert_path="", key_path=""):
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -41,8 +39,14 @@ def connect_mqtt_broker(client_id: str = "", cb_connect: Callable=None):
     def on_disconnect(client, userdata, rc):
         if rc != 0:
             print("Unexpected MQTT disconnection. Will auto-reconnect")
+    
+    # Configurate and Connect
     client = mqtt.Client(client_id)
-    # Connect
+    # For aws iot
+    if ca_path and cert_path and key_path:
+        import ssl
+        client.tls_set(caPath, certfile=certPath, keyfile=keyPath, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
+        
     url_str = os.environ.get('CLOUDMQTT_URL', 'mqtt://localhost:1883')
     url = urlparse.urlparse(url_str)
     client.username_pw_set(url.username, url.password)
