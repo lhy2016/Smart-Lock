@@ -1,5 +1,6 @@
 import os
 
+# MQTT URL
 MQTT_URL = os.environ.get('MQTT_URL', 'mqtt://localhost:1883')
 
 # MQTT broker configuration

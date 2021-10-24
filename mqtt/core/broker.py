@@ -10,7 +10,16 @@ MQTT_CLIENT_TOPICS = [  # topic, QoS
     (MQTT_SERVO_TOPIC, 0),
 ]
 
-def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqtt_url: str = MQTT_URL, client_id: str = "", cb_connect: Callable = None, ca_path: str = "", cert_path: str = "", key_path: str = ""):
+def connect_mqtt_broker(
+    broker_ip=MQTT_BROKER, 
+    broker_port=MQTT_BROKER_PORT, 
+    mqtt_url: str = MQTT_URL, 
+    client_id: str = "", 
+    cb_connect: Callable = None, 
+    ca_path: str = "", 
+    cert_path: str = "", 
+    key_path: str = ""
+    ):
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -24,7 +33,7 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqt
     def on_message(client, userdata, msg):
         # debug
         # print(client.__dict__, userdata)
-        print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+        print("on_message: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
         pass
 
     def on_publish(client, obj, mid):
@@ -46,7 +55,14 @@ def connect_mqtt_broker(broker_ip=MQTT_BROKER, broker_port=MQTT_BROKER_PORT, mqt
     # For aws iot
     if ca_path and cert_path and key_path:
         import ssl
-        client.tls_set(caPath, certfile=certPath, keyfile=keyPath, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
+        client.tls_set(
+            ca_path, 
+            certfile=cert_path, 
+            keyfile=key_path, 
+            cert_reqs=ssl.CERT_REQUIRED, 
+            tls_version=ssl.PROTOCOL_TLSv1_2, 
+            ciphers=None
+            )
     
     url_str = mqtt_url
     url = urlparse.urlparse(url_str)
