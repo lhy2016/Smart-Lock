@@ -2,9 +2,10 @@
 import paho.mqtt.client as mqtt_client
 import os
 import urllib.parse as urlparse
-from core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC #, MQTT_BROKER, MQTT_BROKER_PORT
+from core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC,MQTT_HUB_CAMERA_TOPIC,MQTT_HUB_SERVO_TOPIC #, MQTT_BROKER, MQTT_BROKER_PORT
 import json
 from core.broker import connect_mqtt_broker
+
 
 #MQTT_BROKER, MQTT_BROKER_PORT = "localhost", 1883
 
@@ -44,31 +45,11 @@ def process_message(client,msg):
 
     topic = msg.topic
     if topic == MQTT_CAMERA_TOPIC:
-        img = message.get("photo",None)
-        #msg_camera = message.get("message",'')
-
-        trusted=False
-        #TO DO 
-        # what to do with image
-        if img:
-            trusted = True
-            # trusted = False
-            pass
-            
-        #TO DO
-        #What to do after receiving message from camera esp32
-        #if msg_camera:
-        #    print(msg_camera)
-        if trusted:
-            client.publish(MQTT_SERVO_TOPIC, "Trusted person")
-        else:
-            client.publish(MQTT_SERVO_TOPIC, "Not a trusted person")
-            
-        print("message from esp32/camera: " + message)
-
+        client.publish(MQTT_HUB_SERVO_TOPIC, "receive camera publish servo")
+        
     elif topic == MQTT_SERVO_TOPIC:
         msg_servo = message.get("servo_status",None)
-
+        
         #TO DO 
         #What to do after receiving message from servo esp32
         if msg_servo:
