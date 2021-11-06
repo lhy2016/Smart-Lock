@@ -2,9 +2,9 @@
 import paho.mqtt.client as mqtt_client
 import os
 import urllib.parse as urlparse
-from ../core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC #, MQTT_BROKER, MQTT_BROKER_PORT
+from core.config import MQTT_CAMERA_TOPIC, MQTT_SERVO_TOPIC #, MQTT_BROKER, MQTT_BROKER_PORT
 import json
-from ../core.broker import connect_mqtt_broker
+from core.broker import connect_mqtt_broker
 
 #MQTT_BROKER, MQTT_BROKER_PORT = "localhost", 1883
 
