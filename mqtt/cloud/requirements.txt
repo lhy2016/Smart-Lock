@@ -1,0 +1,9 @@
+paho-mqtt==1.6.1
+Flask-RESTful
+flask
+flask_mqtt
+flask_socketio
+flask_bootstrap
+flask_cors
+apscheduler
+eventlet
