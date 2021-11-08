@@ -37,10 +37,15 @@ def handle_connect(client, userdata, flags, rc):
 def handle_mqtt_message(client, userdata, message):
     print(message.payload)
 
-@app.route("/")
-def root():
-    mqtt.publish("/hub/0001", "hello from server app.py")
-    return "<h1>Hello World!</h1>"
+@app.route("/unlock")
+def unlock():
+    mqtt.publish("hub/control/lock", "u")
+    return "<h1>Requesting unlock to hub</h1>"
+
+@app.route("/lock")
+def lock():
+    mqtt.publish("hub/control/lock", "l")
+    return "<h1>Requesting lock to hub</h1>"
 
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)

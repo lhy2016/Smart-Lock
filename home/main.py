@@ -29,8 +29,13 @@ def on_publish(client, userdata, mid):
 def hub_on_message(client, userdata, msg):
     print("Hub receive message: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     
+    
 def cloud_on_message(client, userdata, msg):
     print("Hub Cloud receive message: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    if msg.topic == "server/control/lock":
+        hub = Hub.instance()
+        if msg.payload != None:
+            hub.publish("hub/control/lock", msg.payload)
 
 def connect_hub():
     try:
