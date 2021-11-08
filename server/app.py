@@ -39,12 +39,12 @@ def handle_mqtt_message(client, userdata, message):
 
 @app.route("/unlock")
 def unlock():
-    mqtt.publish("hub/control/lock", "u")
+    mqtt.publish("server/control/lock", "u")
     return "<h1>Requesting unlock to hub</h1>"
 
 @app.route("/lock")
 def lock():
-    mqtt.publish("hub/control/lock", "l")
+    mqtt.publish("server/control/lock", "l")
     return "<h1>Requesting lock to hub</h1>"
 
 if __name__ == "__main__":
