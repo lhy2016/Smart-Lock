@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -46,6 +46,10 @@ def unlock():
 def lock():
     mqtt.publish("server/control/lock", "l")
     return "<h1>Requesting lock to hub</h1>"
+
+@app.route("/signup", methods=['POST'])
+def signup():
+    print(request)
 
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
