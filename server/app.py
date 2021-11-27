@@ -77,3 +77,4 @@ class User(db.Model):
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
     db.create_all()
+    db.session.commit()
