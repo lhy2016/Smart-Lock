@@ -7,6 +7,7 @@ import psutil
 import sys
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from utilities import row2dict
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:lhy_2016@localhost:5432/smartlock'
@@ -55,16 +56,16 @@ def lock():
 @app.route("/signup", methods=['POST'])
 def signup():
     dataObj = json.loads(request.data)
-    hashed = bcrypt.generate_password_hash(dataObj['password']).decode('utf-8')
-
     existing = User.query.filter_by(email=dataObj['email'])
-    print("EXISTING")
-    print(existing)
+    if len(existing != 0):
+        return json.dumps({"error":"Email is already registered"}), 400
 
+    hashed = bcrypt.generate_password_hash(dataObj['password']).decode('utf-8')
     newUser = User(first_name=dataObj['firstName'],last_name=dataObj['lastName'],
                     email=dataObj['email'], password=hashed)
-    print(dataObj)
-    return json.dumps({"hello":"world"})
+    db.session.add(newUser)
+    db.session.commit()
+    return json.dumps(row2dict(newUser)), 201
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
