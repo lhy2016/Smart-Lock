@@ -49,7 +49,7 @@ def lock():
 
 @app.route("/signup", methods=['POST'])
 def signup():
-    print(request)
+    print(request.data)
     return json.dumps({"hello":"world"})
 
 if __name__ == "__main__":
