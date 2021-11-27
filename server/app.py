@@ -57,7 +57,7 @@ def lock():
 def signup():
     dataObj = json.loads(request.data)
     existing = User.query.filter_by(email=dataObj['email'])
-    if len(existing != 0):
+    if len(existing) != 0:
         return json.dumps({"error":"Email is already registered"}), 400
 
     hashed = bcrypt.generate_password_hash(dataObj['password']).decode('utf-8')
