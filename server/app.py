@@ -53,7 +53,16 @@ def lock():
 @app.route("/signup", methods=['POST'])
 def signup():
     print(request.data)
+    print(type(request.data))
     return json.dumps({"hello":"world"})
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, default='')
+    last_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, default='')
+    email = db.Column(db.String(255, colation='NOCASE'), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False, default='')
+    devices = db.Column(db.PickleType, default=None)
 
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
