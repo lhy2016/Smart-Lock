@@ -5,6 +5,7 @@ from flask_cors import CORS
 import json
 import psutil
 import sys
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['MQTT_BROKER_URL'] = 'localhost'
