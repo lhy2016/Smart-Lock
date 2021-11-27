@@ -85,11 +85,11 @@ def login():
     dataObj = json.loads(request.data)
     user = User.query.filter_by(email=dataObj['email']).all()
     if len(user) != 1:
-        return json.dumps({"error": "Incorrect username or password"}), 401
+        return json.dumps({"error": "Can't find user matched with this email"}), 401
     userObj = user[0]
     actual = userObj.password
     if not bcrypt.check_password_hash(actual, userObj.password):
-        return json.dumps({"error": "Incorrect username or password"}), 401
+        return json.dumps({"error": "Incorrect password"}), 403
     ret = {}
     ret["user_id"] = userObj.id
     ret["first_name"] = userObj.first_name
