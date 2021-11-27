@@ -56,7 +56,7 @@ def lock():
 @app.route("/signup", methods=['POST'])
 def signup():
     dataObj = json.loads(request.data)
-    existing = User.query.filter_by(email=dataObj['email'])
+    existing = User.query.filter_by(email=dataObj['email']).all()
     if len(existing) != 0:
         return json.dumps({"error":"Email is already registered"}), 400
 
