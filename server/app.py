@@ -6,10 +6,12 @@ import json
 import psutil
 import sys
 from flask_sqlalchemy import SQLAlchemy
+from flask.ext.bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:lhy_2016@localhost:5432/smartlock'
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 app.config['MQTT_BROKER_URL'] = 'localhost'
 app.config['MQTT_BROKER_PORT'] = 1883
 app.config['MQTT_KEEPALIVE'] = 60
@@ -52,8 +54,15 @@ def lock():
 
 @app.route("/signup", methods=['POST'])
 def signup():
-    
     dataObj = json.loads(request.data)
+    hashed = bcrypt.generate_password.hash(dataObj['password']).decode('utf-8')
+
+    existing = User.query.filter_by(email=dataObj['email']).first()
+    print("EXISTING")
+    print(existing)
+
+    newUser = User(first_name=dataObj['firstName'],last_name=dataObj['lastName'],
+                    email=dataObj['email'], password=hashed)
     print(dataObj)
     return json.dumps({"hello":"world"})
 
