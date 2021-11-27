@@ -55,7 +55,7 @@ def lock():
 @app.route("/signup", methods=['POST'])
 def signup():
     dataObj = json.loads(request.data)
-    hashed = bcrypt.generate_password.hash(dataObj['password']).decode('utf-8')
+    hashed = bcrypt.generate_password_hash(dataObj['password']).decode('utf-8')
 
     existing = User.query.filter_by(email=dataObj['email']).first()
     print("EXISTING")
