@@ -60,7 +60,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, default='')
     last_name = db.Column(db.String(100, collation='NOCASE'), nullable=False, default='')
-    email = db.Column(db.String(255, colation='NOCASE'), nullable=False, unique=True)
+    email = db.Column(db.String(255, collation='NOCASE'), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False, default='')
     devices = db.Column(db.PickleType, default=None)
 
