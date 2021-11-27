@@ -6,7 +6,7 @@ import json
 import psutil
 import sys
 from flask_sqlalchemy import SQLAlchemy
-from flask.ext.bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:lhy_2016@localhost:5432/smartlock'
