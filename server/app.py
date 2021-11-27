@@ -53,6 +53,19 @@ def lock():
     mqtt.publish("server/control/lock", "l")
     return "<h1>Requesting lock to hub</h1>"
 
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False, default='')
+    last_name = db.Column(db.String(100), nullable=False, default='')
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False, default='')
+    devices = db.Column(db.PickleType, default=None)
+
+db.create_all()
+db.session.commit()
+
 @app.route("/signup", methods=['POST'])
 def signup():
     dataObj = json.loads(request.data)
@@ -67,16 +80,21 @@ def signup():
     db.session.commit()
     return json.dumps(row2dict(newUser)), 201
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(100), nullable=False, default='')
-    last_name = db.Column(db.String(100), nullable=False, default='')
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    password = db.Column(db.String(255), nullable=False, default='')
-    devices = db.Column(db.PickleType, default=None)
-
-db.create_all()
-db.session.commit()
+@app.route("/login", methods=['POST'])
+def login():
+    dataObj = json.loads(request.data)
+    user = User.query.filter_by(email=dataObj['email']).all()
+    if len(user) != 1:
+        return json.dumps({"error": "Incorrect username or password"}), 401
+    userObj = user[0]
+    actual = userObj.password
+    if not bcrypt.check_password_hash(actual, userObj.password):
+        return json.dumps({"error": "Incorrect username or password"}), 401
+    ret = {}
+    ret["user_id"] = userObj.id
+    ret["first_name"] = userObj.first_name
+    ret["email"] = userObj.email
+    return json.dumps(ret), 200
 
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
