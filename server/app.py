@@ -88,7 +88,10 @@ def login():
         return json.dumps({"error": "Can't find user matched with this email"}), 401
     userObj = user[0]
     actual = userObj.password
-    if not bcrypt.check_password_hash(actual, userObj.password):
+    print("actual: " + actual)
+    hashed = bcrypt.generate_password_hash(dataObj['password']).decode('utf-8')
+    print("user hashed: " + hashed)
+    if not bcrypt.check_password_hash(actual, dataObj['password']):
         return json.dumps({"error": "Incorrect password"}), 403
     ret = {}
     ret["user_id"] = userObj.id
