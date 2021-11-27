@@ -52,8 +52,9 @@ def lock():
 
 @app.route("/signup", methods=['POST'])
 def signup():
-    print(request.data)
-    print(type(request.data))
+    
+    dataObj = json.loads(request.data)
+    print(dataObj)
     return json.dumps({"hello":"world"})
 
 class User(db.Model):
