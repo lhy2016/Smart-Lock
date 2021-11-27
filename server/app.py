@@ -74,7 +74,9 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False, default='')
     devices = db.Column(db.PickleType, default=None)
 
+db.create_all()
+db.session.commit()
+
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
-    db.create_all()
-    db.session.commit()
+    
