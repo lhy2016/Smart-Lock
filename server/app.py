@@ -126,7 +126,7 @@ def add_device():
 def get_device():
     user_id = request.args.get('user_id')
     user = User.query.filter_by(id=user_id).all()[0]
-    devices = json.dumps({}) if user.devics == None else user.devices
+    devices = json.dumps({}) if user.devices == None else user.devices
     return devices, 200
     
 
