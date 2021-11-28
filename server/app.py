@@ -103,11 +103,26 @@ def login():
 def add_device():
     dataObj = json.loads(request.data)
     user_id = dataObj["user_id"]
+    hub_name = dataObj["hub_name"]
+    device_name = dataObj["device_name"]
+
     user = User.query.filter_by(id=user_id).all()[0]
     print("****************USER.DEVICES")
-    print(user.devices)
+    devices = json.loads(user.devices)
+    if devices == None: 
+        print("DEVICES IS NONE")
+        devices = {}
+    devices_under_hub = devices[hub_name] if hub_name in devices else {}
+    devices_under_hub[device_name] = {
+        "status" : "on"
+    }
+    devices[hub_name] = devices_under_hub
+    print(devices)
     print("****************USER.DEVICES")
-    return json.dumps({"hello":"world"}), 201
+    user.devices = json.dumps(devices)
+    db.session.commit()
+    ret = {"success": True}
+    return json.dumps(ret), 201
 
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
