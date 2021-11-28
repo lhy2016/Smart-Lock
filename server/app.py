@@ -99,6 +99,16 @@ def login():
     ret["email"] = userObj.email
     return json.dumps(ret), 200
 
+@app.route("/device", method=['POST'])
+def add_device():
+    dataObj = json.loads(request.data)
+    user_id = dataObj["user_id"]
+    user = User.query.filter_by(id=user_id).all()[0]
+    print("****************USER.DEVICES")
+    print(user.devices)
+    print("****************USER.DEVICES")
+    return json.dumps({"hello":"world"}), 201
+
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
     
