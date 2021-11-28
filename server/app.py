@@ -124,18 +124,11 @@ def add_device():
 
 @app.route("/devices", methods=['GET'])
 def get_device():
-    try:
-        dataObj = json.loads(request.data)
-        user_id = dataObj["user_id"]
-        user = User.query.filter_by(id=user_id).all()[0]
-        devices = json.dumps({}) if user.devics == None else user.devices
-        return devices, 200
-    except Exception as e:
-        print("***ERROR:")
-        print(e)
-        print("***ERROR")
-        return json.dumps({"Error": str(e)}), 444
-
+    user_id = request.args.get('user_id')
+    user = User.query.filter_by(id=user_id).all()[0]
+    devices = json.dumps({}) if user.devics == None else user.devices
+    return devices, 200
+    
 
 
 if __name__ == "__main__":
