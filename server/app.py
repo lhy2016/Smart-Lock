@@ -122,6 +122,14 @@ def add_device():
     ret = {"success": True}
     return json.dumps(ret), 201
 
+@app.route("/devices", methods=['GET'])
+def get_device():
+    dataObj = json.loads(request.data)
+    user_id = dataObj["user_id"]
+    user = User.query.filter_by(id=user_id).all()[0]
+    devices = json.dumps({}) if user.devics == None else user.devices
+    return devices, 200
+    
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0', debug=False)
     
