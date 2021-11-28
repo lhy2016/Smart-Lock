@@ -108,10 +108,8 @@ def add_device():
 
     user = User.query.filter_by(id=user_id).all()[0]
     print("****************USER.DEVICES")
-    devices = json.loads(user.devices)
-    if devices == None: 
-        print("DEVICES IS NONE")
-        devices = {}
+    devices = {} if user.devices == None else json.loads(user.devices)
+    
     devices_under_hub = devices[hub_name] if hub_name in devices else {}
     devices_under_hub[device_name] = {
         "status" : "on"
