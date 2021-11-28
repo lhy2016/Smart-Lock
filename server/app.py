@@ -99,7 +99,7 @@ def login():
     ret["email"] = userObj.email
     return json.dumps(ret), 200
 
-@app.route("/device", method=['POST'])
+@app.route("/device", methods=['POST'])
 def add_device():
     dataObj = json.loads(request.data)
     user_id = dataObj["user_id"]
