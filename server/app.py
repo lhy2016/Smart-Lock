@@ -59,8 +59,8 @@ def unlock():
     devices[hub_name][device_name] = deviceStatus
 
     user.devices = json.dumps(devices)
-    session.commit()
-    
+    db.session.commit()
+
     return json.dumps({"success": True}), 200
 
 @app.route("/lock", methods=['POST'])
@@ -78,7 +78,7 @@ def lock():
     devices[hub_name][device_name] = deviceStatus
 
     user.devices = json.dumps(devices)
-    session.commit()
+    db.session.commit()
 
     return json.dumps({"success": True}), 200
 
