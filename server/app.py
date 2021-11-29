@@ -43,16 +43,29 @@ def handle_connect(client, userdata, flags, rc):
 def handle_mqtt_message(client, userdata, message):
     print(message.payload)
 
-@app.route("/unlock")
+@app.route("/unlock", methods=['POST'])
 def unlock():
     mqtt.publish("server/control/lock", "u")
-    return "<h1>Requesting unlock to hub</h1>"
+    dataObj = json.loads(request.data)
+    user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
+    devices = json.loads(user.devices)
+    hub_name = dataObj["hub_name"]
+    device_name = dataObj["device_name"]
+    deviceStatus = devices[hub_name][device_name]
+    print(deviceStatus)
+    return json.dumps({"success": True}), 200
 
-@app.route("/lock")
+@app.route("/lock", methods=['POST'])
 def lock():
     mqtt.publish("server/control/lock", "l")
-    return "<h1>Requesting lock to hub</h1>"
-
+    dataObj = json.loads(request.data)
+    user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
+    devices = json.loads(user.devices)
+    hub_name = dataObj["hub_name"]
+    device_name = dataObj["device_name"]
+    deviceStatus = devices[hub_name][device_name]
+    print(deviceStatus)
+    return json.dumps({"success": True}), 200
 
 
 class User(db.Model):
