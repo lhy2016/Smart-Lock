@@ -32,15 +32,14 @@ def hub_on_message(client, userdata, msg):
     
 def cloud_on_message(client, userdata, msg):
     print("Hub Cloud receive message: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-    print("type of msg.topic: ", type(msg.topic))
-    print("type of msg.payload: ", type(msg.payload))
     if msg.topic.startswith("server/control"):
         hub = Hub.instance()
         if msg.payload != None:
-            temp = msg.payload.split("&")
+            payloadStr = msg.payload.decode('utf-8')
+            temp = payloadStr.split("&")
             device = temp[0]
             action = temp[1]
-            hub.publish("hub/control/lock/"+device, action)
+            hub.publish("hub/control/lock/"+device, action.encode())
 
 def connect_hub():
     try:
