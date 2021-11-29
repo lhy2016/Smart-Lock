@@ -18,6 +18,8 @@ extern uint32_t hall_reading[3];
 bool pwm_update;
 extern SemaphoreHandle_t display_buffer_sem;
 
+void pwm_init();
+
 void mcpwm_example_servo_control(void *arg);
 
 

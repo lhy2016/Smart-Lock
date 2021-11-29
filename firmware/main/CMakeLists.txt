@@ -1,2 +1,2 @@
-idf_component_register(SRCS "main.c" "hardware/i2c_interface.c" "hardware/lcd_display.c" "hardware/pwm.c" "hardware/wifi_hw.c" "hardware/tcp_client_hw.c" "hardware/camera.c" 
+idf_component_register(SRCS "main.c" "hal/control.c" "hardware/i2c_interface.c" "hardware/lcd_display.c" "hardware/pwm.c" "hardware/wifi_hw.c" "hardware/tcp_client_hw.c" "hardware/camera.c" "hardware/mqtt.c"
                     INCLUDE_DIRS "." "hal" "app" "hardware")

@@ -24,6 +24,7 @@ def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         try:
             process_message(client,msg)
+            # look through dictionary to find corresponding callback
         except:
             pass
 
@@ -38,9 +39,9 @@ def process_message(client,msg):
     """
     # log for debugging
     print(msg.topic + " " + str(msg.payload))
-    #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-
-    #message = json.loads(msg.payload.decode())
+    message_payload = json.loads(str(msg.payload.decode()))
+    print("Type of payload to json: " , type(message_payload))
+    print("actual payload: ",message_payload)
     message = str(msg.payload)
 
     topic = msg.topic

@@ -17,11 +17,15 @@
 #include "pwm.h"
 #include "esp_log.h"
 #include "lcd_display.h"
+#include "control.h"
 
 //You can get these value from the datasheet of servo you use, in general pulse width varies between 1000 to 2000 mocrosecond
 #define SERVO_MIN_PULSEWIDTH 500 //Minimum pulse width in microsecond
 #define SERVO_MAX_PULSEWIDTH 2000 //Maximum pulse width in microsecond
 #define SERVO_MAX_DEGREE 180 //Maximum angle in degree upto which servo can rotate
+
+extern control_t control;
+
 static const char *TAG = "pwm";
 static void mcpwm_example_gpio_initialize(void)
 {
@@ -29,10 +33,7 @@ static void mcpwm_example_gpio_initialize(void)
     mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, 18);    //Set GPIO 18 as PWM0A, to which servo is connected
 }
 
-/**
- * @brief Configure MCPWM module
- */
-void mcpwm_example_servo_control(void *arg)
+void pwm_init()
 {
     //1. mcpwm gpio initialization
     mcpwm_example_gpio_initialize();
@@ -45,25 +46,32 @@ void mcpwm_example_servo_control(void *arg)
     pwm_config.cmpr_b = 0;    //duty cycle of PWMxb = 0
     pwm_config.counter_mode = MCPWM_UP_COUNTER;
     pwm_config.duty_mode = MCPWM_DUTY_MODE_0;
+    printf("Configuring Initial Parameters of mcpwm......\n");
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &pwm_config);    //Configure PWM0A & PWM0B with above settings
+    printf("Configuring Initial Parameters of mcpwm......\n");
     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, MCPWM_DUTY_MODE_0); 
-
-
-    //3. register display
-    lcd_layout->item[DOOR_STATE].size = 5;
-    lcd_layout->item[DOOR_STATE].start_addr = 43;
-    printf("%x,%x\n",lcd_layout->item[DOOR_STATE].size,lcd_layout->item[DOOR_STATE].start_addr);
+    printf("Configuring Initial Parameters of mcpwm......\n");
     
+}
+
+/**
+ * @brief Configure MCPWM module
+ */
+void mcpwm_example_servo_control(void *arg)
+{
+    
+    printf("in task servo\n");
     while (1) {
-        if(pwm_update)
+        
+        if(control.lock_state)
         { 
+            ESP_LOGI("PWM","lock true\n");
             mcpwm_set_duty(MCPWM_UNIT_0,MCPWM_TIMER_0,MCPWM_OPR_A,62.5);
-            update_item(DOOR_STATE,"open");
         }
         else
         { 
+            ESP_LOGI("PWM","lock false\n");
             mcpwm_set_duty(MCPWM_UNIT_0,MCPWM_TIMER_0,MCPWM_OPR_A,10.0);
-            update_item(DOOR_STATE,"close");
         }
         vTaskDelay(100);     //Add delay, since it takes time for servo to rotate, generally 100ms/60degree rotation at 5V
     }

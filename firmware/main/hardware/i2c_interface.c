@@ -10,7 +10,7 @@ uint32_t i2c_master_init(void)
     conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
     conf.scl_io_num = 22;
     conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = 100000;
+    conf.master.clk_speed = 50000;
     i2c_param_config(0, &conf);
     return (uint32_t)i2c_driver_install(i2c_master_port, conf.mode, 0, 0, 0);
 }

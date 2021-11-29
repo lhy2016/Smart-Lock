@@ -12,13 +12,13 @@
         "0x1000" : "bootloader/bootloader.bin",
         "0x10000" : "firmware.bin"
     },
-    "partition_table" : { "offset" : "0x8000", "file" : "partition_table/partition-table.bin" },
-    "bootloader" : { "offset" : "0x1000", "file" : "bootloader/bootloader.bin" },
-    "app" : { "offset" : "0x10000", "file" : "firmware.bin" },
+    "partition_table" : { "offset" : "0x8000", "file" : "partition_table/partition-table.bin", "encrypted" : "false" },
+    "bootloader" : { "offset" : "0x1000", "file" : "bootloader/bootloader.bin", "encrypted" : "false" },
+    "app" : { "offset" : "0x10000", "file" : "firmware.bin", "encrypted" : "false" },
     "extra_esptool_args" : {
         "after"  : "hard_reset",
         "before" : "default_reset",
-        "stub"   : "TRUE",
+        "stub"   : true,
         "chip"   : "esp32"
     }
 }

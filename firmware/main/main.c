@@ -24,6 +24,8 @@
 #include "camera.h"
 #include "driver/sdmmc_host.h"
 #include "sdmmc_cmd.h"
+#include "mqtt.h"
+#include "control.h"
 
 #ifdef CONFIG_IDF_TARGET_ESP32
 #define CHIP_NAME "ESP32"
@@ -33,8 +35,8 @@
 #define CHIP_NAME "ESP32-S2 Beta"
 #endif
 
-#define CAM_MODE  1
-#define LOCK_MODE 0
+#define CAM_MODE  0
+#define LOCK_MODE 1
 
 /********************************* Macro Declaration *********************************************/
 
@@ -65,6 +67,7 @@ static TaskHandle_t tcp_task_handle;
 
 extern screen_buffer_t *ph_screen;
 extern uint32_t hall_reading[3];
+extern control_t control;
 
 /************************************ Buffer  Declaration ****************************************/
 
@@ -77,35 +80,10 @@ extern uint32_t hall_reading[3];
 
 void LCD_Update_Task()
 {
-    ESP_LOGI(TAG,"LCD INIT DONE\n");
     while(1)
     {
-        if(LCD_update)
-        {
-            ESP_LOGI(TAG,"draw\n");
-            draw();
-            LCD_update = false;
-        }
-        vTaskDelay(100);
-    }
-}
-
-void GPIO_Check()
-{
-    gpio_set_direction(GPIO_BUTTON,GPIO_MODE_INPUT);
-    gpio_pulldown_en(GPIO_BUTTON);
-    ESP_LOGI(TAG,"GPIO DONE\n");
-    while(1)
-    {
-        
-        if(gpio_get_level(GPIO_BUTTON) == 1)
-        {
-            ESP_LOGI(TAG, "GPIO update");
-            tcp_payload_update=1;
-            pwm_update = !pwm_update;
-            LCD_update = true;
-        }
-        vTaskDelay(100);
+        draw();
+        vTaskDelay(1000);
     }
 }
 
@@ -113,17 +91,24 @@ void app_main(void)
 {
     printf("Hello world!\n");
 
-    esp_log_level_set("i2c",ESP_LOG_VERBOSE);    
+    //esp_log_level_set("i2c",ESP_LOG_VERBOSE);    
 
-    i2c_master_init();
+    //i2c_master_init();
 
-    i2c_init_display_sequence();
+    //i2c_init_display_sequence();
 
-    lcd_display_init();
+    //lcd_display_init();
  
     wifi_init();
 
+    mqtt_app_start();
+
+    control_init();
+    
+    pwm_init();
+
 #if LOCK_MODE
+    /*
     xTaskCreate(LCD_Update_Task,
                 "Display loop",
                 4096,
@@ -131,7 +116,8 @@ void app_main(void)
                 1,
                 &display_task_handle
                 );
-    
+                
+    */
 
     xTaskCreate(mcpwm_example_servo_control, 
                 "mcpwm_example_servo_control", 
@@ -140,22 +126,6 @@ void app_main(void)
                 5, 
                 NULL);
 #endif         
-
-xTaskCreate(tcp_client_task,
-                "TCP client packet",
-                8000,
-                0,
-                5,
-                &tcp_task_handle
-                );
-
-xTaskCreate(GPIO_Check,
-                "GPIO check task",
-                4096,
-                0,
-                3,
-                &gpio_task_handle
-                ); 
 
 #if CAM_MODE
     

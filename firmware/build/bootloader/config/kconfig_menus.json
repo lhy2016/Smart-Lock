@@ -23,6 +23,26 @@
         "children": [],
         "depends_on": null,
         "help": null,
+        "id": "IDF_TARGET_ARCH_RISCV",
+        "name": "IDF_TARGET_ARCH_RISCV",
+        "range": null,
+        "title": null,
+        "type": "bool"
+    },
+    {
+        "children": [],
+        "depends_on": null,
+        "help": null,
+        "id": "IDF_TARGET_ARCH_XTENSA",
+        "name": "IDF_TARGET_ARCH_XTENSA",
+        "range": null,
+        "title": null,
+        "type": "bool"
+    },
+    {
+        "children": [],
+        "depends_on": null,
+        "help": null,
         "id": "IDF_TARGET",
         "name": "IDF_TARGET",
         "range": null,
@@ -43,8 +63,48 @@
         "children": [],
         "depends_on": null,
         "help": null,
-        "id": "IDF_TARGET_ESP32S2BETA",
-        "name": "IDF_TARGET_ESP32S2BETA",
+        "id": "IDF_TARGET_ESP32S2",
+        "name": "IDF_TARGET_ESP32S2",
+        "range": null,
+        "title": null,
+        "type": "bool"
+    },
+    {
+        "children": [],
+        "depends_on": null,
+        "help": null,
+        "id": "IDF_TARGET_ESP32S3",
+        "name": "IDF_TARGET_ESP32S3",
+        "range": null,
+        "title": null,
+        "type": "bool"
+    },
+    {
+        "children": [
+            {
+                "children": [],
+                "depends_on": "<choice IDF_TARGET_ESP32S3_BETA_VERSION>",
+                "help": null,
+                "id": "IDF_TARGET_ESP32S3_BETA_VERSION_2",
+                "name": "IDF_TARGET_ESP32S3_BETA_VERSION_2",
+                "range": null,
+                "title": "ESP32-S3 beta2",
+                "type": "bool"
+            }
+        ],
+        "depends_on": "IDF_TARGET_ESP32S3",
+        "help": "Currently ESP32-S3 has several beta versions for internal use only.\nSelect the one that matches your chip model.",
+        "id": "esp32-s3-beta-version",
+        "name": "IDF_TARGET_ESP32S3_BETA_VERSION",
+        "title": "ESP32-S3 beta version",
+        "type": "choice"
+    },
+    {
+        "children": [],
+        "depends_on": null,
+        "help": null,
+        "id": "IDF_TARGET_ESP32C3",
+        "name": "IDF_TARGET_ESP32C3",
         "range": null,
         "title": null,
         "type": "bool"
@@ -133,7 +193,7 @@
                     }
                 ],
                 "depends_on": null,
-                "help": "Select the way the application is built.\n\nBy default, the application is built as a binary file in a format compatible with\nthe ESP32 bootloader. In addition to this application, 2nd stage bootloader is\nalso built. Application and bootloader binaries can be written into flash and\nloaded/executed from there.\n\nAnother option, useful for only very small and limited applications, is to only link\nthe .elf file of the application, such that it can be loaded directly into RAM over\nJTAG. Note that since IRAM and DRAM sizes are very limited, it is not possible to\nbuild any complex application this way. However for kinds of testing and debugging,\nthis option may provide faster iterations, since the application does not need to be\nwritten into flash.\nNote that at the moment, ESP-IDF does not contain all the startup code required to\ninitialize the CPUs and ROM memory (data/bss). Therefore it is necessary to execute\na bit of ROM code prior to executing the application. A gdbinit file may look as follows:\n\n    # Connect to a running instance of OpenOCD\n    target remote :3333\n    # Reset and halt the target\n    mon reset halt\n    # Run to a specific point in ROM code,\n    #  where most of initialization is complete.\n    thb *0x40007901\n    c\n    # Load the application into RAM\n    load\n    # Run till app_main\n    tb app_main\n    c\n\nExecute this gdbinit file as follows:\n\n    xtensa-esp32-elf-gdb build/app-name.elf -x gdbinit\n\nRecommended sdkconfig.defaults for building loadable ELF files is as follows.\nCONFIG_APP_BUILD_TYPE_ELF_RAM is required, other options help reduce application\nmemory footprint.\n\n    CONFIG_APP_BUILD_TYPE_ELF_RAM=y\n    CONFIG_VFS_SUPPORT_TERMIOS=\n    CONFIG_NEWLIB_NANO_FORMAT=y\n    CONFIG_ESP32_PANIC_PRINT_HALT=y\n    CONFIG_ESP32_DEBUG_STUBS_ENABLE=\n    CONFIG_ESP_ERR_TO_NAME_LOOKUP=",
+                "help": "Select the way the application is built.\n\nBy default, the application is built as a binary file in a format compatible with\nthe ESP-IDF bootloader. In addition to this application, 2nd stage bootloader is\nalso built. Application and bootloader binaries can be written into flash and\nloaded/executed from there.\n\nAnother option, useful for only very small and limited applications, is to only link\nthe .elf file of the application, such that it can be loaded directly into RAM over\nJTAG. Note that since IRAM and DRAM sizes are very limited, it is not possible to\nbuild any complex application this way. However for kinds of testing and debugging,\nthis option may provide faster iterations, since the application does not need to be\nwritten into flash.\nNote that at the moment, ESP-IDF does not contain all the startup code required to\ninitialize the CPUs and ROM memory (data/bss). Therefore it is necessary to execute\na bit of ROM code prior to executing the application. A gdbinit file may look as follows (for ESP32):\n\n    # Connect to a running instance of OpenOCD\n    target remote :3333\n    # Reset and halt the target\n    mon reset halt\n    # Run to a specific point in ROM code,\n    #  where most of initialization is complete.\n    thb *0x40007d54\n    c\n    # Load the application into RAM\n    load\n    # Run till app_main\n    tb app_main\n    c\n\nExecute this gdbinit file as follows:\n\n    xtensa-esp32-elf-gdb build/app-name.elf -x gdbinit\n\nExample gdbinit files for other targets can be found in tools/test_apps/system/gdb_loadable_elf/\n\nRecommended sdkconfig.defaults for building loadable ELF files is as follows.\nCONFIG_APP_BUILD_TYPE_ELF_RAM is required, other options help reduce application\nmemory footprint.\n\n    CONFIG_APP_BUILD_TYPE_ELF_RAM=y\n    CONFIG_VFS_SUPPORT_TERMIOS=\n    CONFIG_NEWLIB_NANO_FORMAT=y\n    CONFIG_ESP_SYSTEM_PANIC_PRINT_HALT=y\n    CONFIG_ESP_DEBUG_STUBS_ENABLE=\n    CONFIG_ESP_ERR_TO_NAME_LOOKUP=",
                 "id": "build-type-application-build-type",
                 "name": "APP_BUILD_TYPE",
                 "title": "Application build type",
@@ -177,6 +237,16 @@
     },
     {
         "children": [
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "Offset address that 2nd bootloader will be flashed to.\nThe value is determined by the ROM bootloader.\nIt's not configurable in ESP-IDF.",
+                "id": "BOOTLOADER_OFFSET_IN_FLASH",
+                "name": "BOOTLOADER_OFFSET_IN_FLASH",
+                "range": null,
+                "title": null,
+                "type": "hex"
+            },
             {
                 "children": [
                     {
@@ -309,12 +379,22 @@
             },
             {
                 "children": [],
-                "depends_on": "ESPTOOLPY_FLASHMODE_QIO || ESPTOOLPY_FLASHMODE_QOUT",
-                "help": "This value is ignored unless flash mode is set to QIO or QOUT *and* the SPI flash pins have been\noverriden by setting the eFuses SPI_PAD_CONFIG_xxx.\n\nWhen this is the case, the eFuse config only defines 3 of the 4 Quad I/O data pins. The WP pin (aka ESP32\npin \"SD_DATA_3\" or SPI flash pin \"IO2\") is not specified in eFuse. That pin number is compiled into the\nbootloader instead.\n\nThe default value (GPIO 7) is correct for WP pin on ESP32-D2WD integrated flash.",
+                "depends_on": "IDF_TARGET_ESP32 && (ESPTOOLPY_FLASHMODE_QIO || ESPTOOLPY_FLASHMODE_QOUT)",
+                "help": "This setting is only used if the SPI flash pins have been overridden by setting the eFuses\nSPI_PAD_CONFIG_xxx, and the SPI flash mode is QIO or QOUT.\n\nWhen this is the case, the eFuse config only defines 3 of the 4 Quad I/O data pins. The WP pin (aka\nESP32 pin \"SD_DATA_3\" or SPI flash pin \"IO2\") is not specified in eFuse. The same pin is also used\nfor external SPIRAM if it is enabled.\n\nIf this config item is set to N (default), the correct WP pin will be automatically used for any\nEspressif chip or module with integrated flash. If a custom setting is needed, set this config item to\nY and specify the GPIO number connected to the WP.",
+                "id": "BOOTLOADER_SPI_CUSTOM_WP_PIN",
+                "name": "BOOTLOADER_SPI_CUSTOM_WP_PIN",
+                "range": null,
+                "title": "Use custom SPI Flash WP Pin when flash pins set in eFuse (read help)",
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": "IDF_TARGET_ESP32 && (ESPTOOLPY_FLASHMODE_QIO || ESPTOOLPY_FLASHMODE_QOUT)",
+                "help": "The option \"Use custom SPI Flash WP Pin\" must be set or this value is ignored\n\nIf burning a customized set of SPI flash pins in eFuse and using QIO or QOUT mode for flash, set this\nvalue to the GPIO number of the SPI flash WP pin.",
                 "id": "BOOTLOADER_SPI_WP_PIN",
                 "name": "BOOTLOADER_SPI_WP_PIN",
                 "range": null,
-                "title": "SPI Flash WP Pin when customising pins via eFuse (read help)",
+                "title": "Custom SPI Flash WP Pin",
                 "type": "int"
             },
             {
@@ -401,7 +481,7 @@
                         "type": "int"
                     }
                 ],
-                "depends_on": null,
+                "depends_on": "!BOOTLOADER_APP_ANTI_ROLLBACK",
                 "help": "Allows to run the test app from \"TEST\" partition.\nA boot from \"test\" partition will occur if there is a GPIO input pulled low while device starts up.\nSee settings below.",
                 "id": "BOOTLOADER_APP_TEST",
                 "name": "BOOTLOADER_APP_TEST",
@@ -470,7 +550,7 @@
                             {
                                 "children": [],
                                 "depends_on": "BOOTLOADER_APP_ANTI_ROLLBACK",
-                                "help": "The size of the efuse secure version field.\nIts length is limited to 32 bits for ESP32 and 16 bits for ESP32S2BETA.\nThis determines how many times the security version can be increased.",
+                                "help": "The size of the efuse secure version field.\nIts length is limited to 32 bits for ESP32 and 16 bits for ESP32-S2.\nThis determines how many times the security version can be increased.",
                                 "id": "BOOTLOADER_APP_SEC_VER_SIZE_EFUSE_FIELD",
                                 "name": "BOOTLOADER_APP_SEC_VER_SIZE_EFUSE_FIELD",
                                 "range": null,
@@ -508,11 +588,31 @@
             {
                 "children": [],
                 "depends_on": "(SECURE_BOOT && SECURE_BOOT_INSECURE) || !SECURE_BOOT",
-                "help": "This option disables the normal validation of an image coming out of\ndeep sleep (checksums, SHA256, and signature). This is a trade-off\nbetween wakeup performance from deep sleep, and image integrity checks.\n\nOnly enable this if you know what you are doing. It should not be used\nin conjunction with using deep_sleep() entry and changing the active OTA\npartition as this would skip the validation upon first load of the new\nOTA partition.",
+                "help": "This option disables the normal validation of an image coming out of\ndeep sleep (checksums, SHA256, and signature). This is a trade-off\nbetween wakeup performance from deep sleep, and image integrity checks.\n\nOnly enable this if you know what you are doing. It should not be used\nin conjunction with using deep_sleep() entry and changing the active OTA\npartition as this would skip the validation upon first load of the new\nOTA partition.\n\nIt is possible to enable this option with Secure Boot if \"allow insecure\noptions\" is enabled, however it's strongly recommended to NOT enable it as\nit may allow a Secure Boot bypass.",
                 "id": "BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP",
                 "name": "BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP",
                 "range": null,
                 "title": "Skip image validation when exiting deep sleep",
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": "!SECURE_SIGNED_ON_BOOT",
+                "help": "Some applications need to boot very quickly from power on. By default, the entire app binary\nis read from flash and verified which takes up a significant portion of the boot time.\n\nEnabling this option will skip validation of the app when the SoC boots from power on.\nNote that in this case it's not possible for the bootloader to detect if an app image is\ncorrupted in the flash, therefore it's not possible to safely fall back to a different app\npartition. Flash corruption of this kind is unlikely but can happen if there is a serious\nfirmware bug or physical damage.\n\nFollowing other reset types, the bootloader will still validate the app image. This increases\nthe chances that flash corruption resulting in a crash can be detected following soft reset, and\nthe bootloader will fall back to a valid app image. To increase the chances of successfully recovering\nfrom a flash corruption event, keep the option BOOTLOADER_WDT_ENABLE enabled and consider also enabling\nBOOTLOADER_WDT_DISABLE_IN_USER_CODE - then manually disable the RTC Watchdog once the app is running.\nIn addition, enable both the Task and Interrupt watchdog timers with reset options set.",
+                "id": "BOOTLOADER_SKIP_VALIDATE_ON_POWER_ON",
+                "name": "BOOTLOADER_SKIP_VALIDATE_ON_POWER_ON",
+                "range": null,
+                "title": "Skip image validation from power on reset (READ HELP FIRST)",
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": "!SECURE_SIGNED_ON_BOOT",
+                "help": "Selecting this option prevents the bootloader from ever validating the app image before\nbooting it. Any flash corruption of the selected app partition will make the entire SoC\nunbootable.\n\nAlthough flash corruption is a very rare case, it is not recommended to select this option.\nConsider selecting \"Skip image validation from power on reset\" instead. However, if boot time\nis the only important factor then it can be enabled.",
+                "id": "BOOTLOADER_SKIP_VALIDATE_ALWAYS",
+                "name": "BOOTLOADER_SKIP_VALIDATE_ALWAYS",
+                "range": null,
+                "title": "Skip image validation always (READ HELP FIRST)",
                 "type": "bool"
             },
             {
@@ -586,6 +686,26 @@
             },
             {
                 "children": [],
+                "depends_on": "ESP32_REV_MIN_3 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32C3",
+                "help": null,
+                "id": "SECURE_BOOT_SUPPORTS_RSA",
+                "name": "SECURE_BOOT_SUPPORTS_RSA",
+                "range": null,
+                "title": null,
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": "IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32C3",
+                "help": null,
+                "id": "SECURE_TARGET_HAS_SECURE_ROM_DL_MODE",
+                "name": "SECURE_TARGET_HAS_SECURE_ROM_DL_MODE",
+                "range": null,
+                "title": null,
+                "type": "bool"
+            },
+            {
+                "children": [],
                 "depends_on": "!SECURE_BOOT",
                 "help": "Require apps to be signed to verify their integrity.\n\nThis option uses the same app signature scheme as hardware secure boot, but unlike hardware secure boot it\ndoes not prevent the bootloader from being physically updated. This means that the device can be secured\nagainst remote network access, but not physical access. Compared to using hardware Secure Boot this option\nis much simpler to implement.",
                 "id": "SECURE_SIGNED_APPS_NO_SECURE_BOOT",
@@ -608,7 +728,7 @@
                     },
                     {
                         "children": [],
-                        "depends_on": "ESP32_REV_MIN_3 && SECURE_BOOT_V2_ENABLED && <choice SECURE_SIGNED_APPS_SCHEME>",
+                        "depends_on": "SECURE_BOOT_SUPPORTS_RSA && (SECURE_SIGNED_APPS_NO_SECURE_BOOT || SECURE_BOOT_V2_ENABLED) && <choice SECURE_SIGNED_APPS_SCHEME>",
                         "help": "Appends the RSA-3072 based Signature block to the application.\nRefer to <Secure Boot Version 2 documentation link> before enabling.",
                         "id": "SECURE_SIGNED_APPS_RSA_SCHEME",
                         "name": "SECURE_SIGNED_APPS_RSA_SCHEME",
@@ -618,7 +738,7 @@
                     }
                 ],
                 "depends_on": "SECURE_BOOT || SECURE_SIGNED_APPS_NO_SECURE_BOOT",
-                "help": "Select the Secure App signing scheme. Depends on the Chip Revision.\nThere are two options:\n1. ECDSA based secure boot scheme. (Only choice for Secure Boot V1)\nSupported in ESP32 and ESP32-ECO3.\n2. The RSA based secure boot scheme. (Only choice for Secure Boot V2)\nSupported in ESP32-ECO3. (ESP32 Chip Revision 3 onwards)",
+                "help": "Select the Secure App signing scheme. Depends on the Chip Revision.\nThere are two options:\n1. ECDSA based secure boot scheme. (Only choice for Secure Boot V1)\nSupported in ESP32 and ESP32-ECO3.\n2. The RSA based secure boot scheme. (Only choice for Secure Boot V2)\nSupported in ESP32-ECO3 (ESP32 Chip Revision 3 onwards), ESP32-S2, ESP32-C3, ESP32-S3.",
                 "id": "security-features-app-signing-scheme",
                 "name": "SECURE_SIGNED_APPS_SCHEME",
                 "title": "App Signing Scheme",
@@ -626,7 +746,7 @@
             },
             {
                 "children": [],
-                "depends_on": "SECURE_SIGNED_APPS_NO_SECURE_BOOT",
+                "depends_on": "SECURE_SIGNED_APPS_NO_SECURE_BOOT && SECURE_SIGNED_APPS_ECDSA_SCHEME",
                 "help": "If this option is set, the bootloader will be compiled with code to verify that an app is signed before\nbooting it.\n\nIf hardware secure boot is enabled, this option is always enabled and cannot be disabled.\nIf hardware secure boot is not enabled, this option doesn't add significant security by itself so most\nusers will want to leave it disabled.",
                 "id": "SECURE_SIGNED_ON_BOOT_NO_SECURE_BOOT",
                 "name": "SECURE_SIGNED_ON_BOOT_NO_SECURE_BOOT",
@@ -660,7 +780,7 @@
                             },
                             {
                                 "children": [],
-                                "depends_on": "ESP32_REV_MIN_3 && <choice SECURE_BOOT_VERSION>",
+                                "depends_on": "SECURE_BOOT_SUPPORTS_RSA && <choice SECURE_BOOT_VERSION>",
                                 "help": "Build a bootloader which enables Secure Boot version 2 on first boot.\nRefer to Secure Boot V2 section of the ESP-IDF Programmer's Guide for this version before enabling.",
                                 "id": "SECURE_BOOT_V2_ENABLED",
                                 "name": "SECURE_BOOT_V2_ENABLED",
@@ -670,14 +790,14 @@
                             }
                         ],
                         "depends_on": "SECURE_BOOT",
-                        "help": "Select the Secure Boot Version. Depends on the Chip Revision.\nSecure Boot V2 is the new RSA based secure boot scheme.\nSupported in ESP32-ECO3. (ESP32 Chip Revision 3 onwards)\nSecure Boot V1 is the AES based secure boot scheme.\nSupported in ESP32 and ESP32-ECO3.",
+                        "help": "Select the Secure Boot Version. Depends on the Chip Revision.\nSecure Boot V2 is the new RSA based secure boot scheme.\nSupported in ESP32-ECO3 (ESP32 Chip Revision 3 onwards), ESP32-S2, ESP32-C3 ECO3.\nSecure Boot V1 is the AES based secure boot scheme.\nSupported in ESP32 and ESP32-ECO3.",
                         "id": "security-features-enable-hardware-secure-boot-in-bootloader-read-docs-first--select-secure-boot-version",
                         "name": "SECURE_BOOT_VERSION",
                         "title": "Select secure boot version",
                         "type": "choice"
                     }
                 ],
-                "depends_on": null,
+                "depends_on": "IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || ESP32C3_REV_MIN_3",
                 "help": "Build a bootloader which enables Secure Boot on first boot.\n\nOnce enabled, Secure Boot will not boot a modified bootloader. The bootloader will only load a partition\ntable or boot an app if the data has a verified digital signature. There are implications for reflashing\nupdated apps once secure boot is enabled.\n\nWhen enabling secure boot, JTAG and ROM BASIC Interpreter are permanently disabled by default.",
                 "id": "SECURE_BOOT",
                 "name": "SECURE_BOOT",
@@ -811,7 +931,7 @@
                                 "type": "bool"
                             }
                         ],
-                        "depends_on": "IDF_TARGET_ESP32S2BETA && SECURE_FLASH_ENC_ENABLED",
+                        "depends_on": "IDF_TARGET_ESP32S2 && SECURE_FLASH_ENC_ENABLED",
                         "help": "Size of generated AES-XTS key.\n\nAES-128 uses a 256-bit key (32 bytes) which occupies one Efuse key block.\nAES-256 uses a 512-bit key (64 bytes) which occupies two Efuse key blocks.\n\nThis setting is ignored if either type of key is already burned to Efuse before the first boot.\nIn this case, the pre-burned key is used and no new key is generated.",
                         "id": "security-features-enable-flash-encryption-on-boot-read-docs-first--size-of-generated-aes-xts-key",
                         "name": "SECURE_FLASH_ENCRYPTION_KEYSIZE",
@@ -861,7 +981,7 @@
                 "children": [
                     {
                         "children": [],
-                        "depends_on": "SECURE_BOOT_INSECURE || SECURE_FLASH_ENCRYPTION_MODE_DEVELOPMENT",
+                        "depends_on": "(SECURE_BOOT_INSECURE || SECURE_FLASH_ENCRYPTION_MODE_DEVELOPMENT) && IDF_TARGET_ESP32",
                         "help": "By default, the BASIC ROM Console starts on reset if no valid bootloader is\nread from the flash.\n\nWhen either flash encryption or secure boot are enabled, the default is to\ndisable this BASIC fallback mode permanently via eFuse.\n\nIf this option is set, this eFuse is not burned and the BASIC ROM Console may\nremain accessible.  Only set this option in testing environments.",
                         "id": "SECURE_BOOT_ALLOW_ROM_BASIC",
                         "name": "SECURE_BOOT_ALLOW_ROM_BASIC",
@@ -911,7 +1031,7 @@
                     },
                     {
                         "children": [],
-                        "depends_on": "SECURE_FLASH_ENCRYPTION_MODE_DEVELOPMENT",
+                        "depends_on": "SECURE_FLASH_ENCRYPTION_MODE_DEVELOPMENT && IDF_TARGET_ESP32",
                         "help": "If not set (default), the bootloader will permanently disable UART bootloader decryption access on\nfirst boot. If set, the UART bootloader will still be able to access hardware decryption.\n\nOnly set this option in testing environments. Setting this option allows complete bypass of flash\nencryption.",
                         "id": "SECURE_FLASH_UART_BOOTLOADER_ALLOW_DEC",
                         "name": "SECURE_FLASH_UART_BOOTLOADER_ALLOW_DEC",
@@ -944,6 +1064,46 @@
                 "id": "security-features-potentially-insecure-options",
                 "title": "Potentially insecure options",
                 "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "depends_on": "<choice SECURE_UART_ROM_DL_MODE>",
+                        "help": "If set, during startup the app will burn an eFuse bit to permanently disable the UART ROM\nDownload Mode. This prevents any future use of esptool.py, espefuse.py and similar tools.\n\nOnce disabled, if the SoC is booted with strapping pins set for ROM Download Mode\nthen an error is printed instead.\n\nIt is recommended to enable this option in any production application where Flash\nEncryption and/or Secure Boot is enabled and access to Download Mode is not required.\n\nIt is also possible to permanently disable Download Mode by calling\nesp_efuse_disable_rom_download_mode() at runtime.",
+                        "id": "SECURE_DISABLE_ROM_DL_MODE",
+                        "name": "SECURE_DISABLE_ROM_DL_MODE",
+                        "range": null,
+                        "title": "UART ROM download mode (Permanently disabled (recommended))",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "SECURE_TARGET_HAS_SECURE_ROM_DL_MODE && <choice SECURE_UART_ROM_DL_MODE>",
+                        "help": "If set, during startup the app will burn an eFuse bit to permanently switch the UART ROM\nDownload Mode into a separate Secure Download mode. This option can only work if\nDownload Mode is not already disabled by eFuse.\n\nSecure Download mode limits the use of Download Mode functions to simple flash read,\nwrite and erase operations, plus a command to return a summary of currently enabled\nsecurity features.\n\nSecure Download mode is not compatible with the esptool.py flasher stub feature,\nespefuse.py, read/writing memory or registers, encrypted download, or any other\nfeatures that interact with unsupported Download Mode commands.\n\nSecure Download mode should be enabled in any application where Flash Encryption\nand/or Secure Boot is enabled. Disabling this option does not immediately cancel\nthe benefits of the security features, but it increases the potential \"attack\nsurface\" for an attacker to try and bypass them with a successful physical attack.\n\nIt is also possible to enable secure download mode at runtime by calling\nesp_efuse_enable_rom_secure_download_mode()",
+                        "id": "SECURE_ENABLE_SECURE_ROM_DL_MODE",
+                        "name": "SECURE_ENABLE_SECURE_ROM_DL_MODE",
+                        "range": null,
+                        "title": "UART ROM download mode (Permanently switch to Secure mode (recommended))",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "<choice SECURE_UART_ROM_DL_MODE>",
+                        "help": "This is a potentially insecure option.\nEnabling this option will allow the full UART download mode to stay enabled.\nThis option SHOULD NOT BE ENABLED for production use cases.",
+                        "id": "SECURE_INSECURE_ALLOW_DL_MODE",
+                        "name": "SECURE_INSECURE_ALLOW_DL_MODE",
+                        "range": null,
+                        "title": "UART ROM download mode (Enabled (not recommended))",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": "(SECURE_BOOT_V2_ENABLED || SECURE_FLASH_ENC_ENABLED) && (!IDF_TARGET_ESP32 || ESP32_REV_MIN_3)",
+                "help": null,
+                "id": "security-features-uart-rom-download-mode",
+                "name": "SECURE_UART_ROM_DL_MODE",
+                "title": "UART ROM download mode",
+                "type": "choice"
             }
         ],
         "depends_on": null,
@@ -1051,6 +1211,16 @@
                 "name": "ESPTOOLPY_COMPRESSED",
                 "range": null,
                 "title": "Use compressed upload",
+                "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "The flasher tool sends a precompiled download stub first by default. That stub allows things\nlike compressed downloads and more. Usually you should not need to disable that feature",
+                "id": "ESPTOOLPY_NO_STUB",
+                "name": "ESPTOOLPY_NO_STUB",
+                "range": null,
+                "title": "Disable download stub",
                 "type": "bool"
             },
             {
@@ -1339,6 +1509,16 @@
                         "children": [],
                         "depends_on": "<choice ESPTOOLPY_MONITOR_BAUD>",
                         "help": null,
+                        "id": "ESPTOOLPY_MONITOR_BAUD_CONSOLE",
+                        "name": "ESPTOOLPY_MONITOR_BAUD_CONSOLE",
+                        "range": null,
+                        "title": "Same as UART console baud rate",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "<choice ESPTOOLPY_MONITOR_BAUD>",
+                        "help": null,
                         "id": "ESPTOOLPY_MONITOR_BAUD_9600B",
                         "name": "ESPTOOLPY_MONITOR_BAUD_9600B",
                         "range": null,
@@ -1407,7 +1587,7 @@
                     }
                 ],
                 "depends_on": null,
-                "help": "Baud rate to use when running 'idf.py monitor' or 'make monitor'\nto view serial output from a running chip.\n\nCan override by setting the MONITORBAUD environment variable.",
+                "help": "Baud rate to use when running 'idf.py monitor' or 'make monitor'\nto view serial output from a running chip.\n\nIf \"Same as UART Console baud rate\" is chosen then the value will\nfollow the \"UART Console baud rate\" config item.\n\nCan override by setting the MONITORBAUD environment variable.",
                 "id": "serial-flasher-config--idf-py-monitor-baud-rate",
                 "name": "ESPTOOLPY_MONITOR_BAUD",
                 "title": "'idf.py monitor' baud rate",
@@ -1472,6 +1652,26 @@
                         "range": null,
                         "title": "Custom partition table CSV",
                         "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "!ESP32_COREDUMP_ENABLE_TO_FLASH && NVS_ENCRYPTION && <choice PARTITION_TABLE_TYPE>",
+                        "help": null,
+                        "id": "PARTITION_TABLE_SINGLE_APP_ENCRYPTED_NVS",
+                        "name": "PARTITION_TABLE_SINGLE_APP_ENCRYPTED_NVS",
+                        "range": null,
+                        "title": "Single factory app, no OTA, encrypted NVS",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "!ESP_COREDUMP_ENABLE_TO_FLASH && NVS_ENCRYPTION && <choice PARTITION_TABLE_TYPE>",
+                        "help": null,
+                        "id": "PARTITION_TABLE_TWO_OTA_ENCRYPTED_NVS",
+                        "name": "PARTITION_TABLE_TWO_OTA_ENCRYPTED_NVS",
+                        "range": null,
+                        "title": "Factory app, two OTA definitions, encrypted NVS",
+                        "type": "bool"
                     }
                 ],
                 "depends_on": null,
@@ -1513,7 +1713,7 @@
             },
             {
                 "children": [],
-                "depends_on": null,
+                "depends_on": "!ESP32_COMPATIBLE_PRE_V3_1_BOOTLOADERS",
                 "help": "Generate an MD5 checksum for the partition table for protecting the\nintegrity of the table. The generation should be turned off for legacy\nbootloaders which cannot recognize the MD5 checksum in the partition\ntable.",
                 "id": "PARTITION_TABLE_MD5",
                 "name": "PARTITION_TABLE_MD5",
@@ -1730,6 +1930,16 @@
                 "range": null,
                 "title": "Disable new warnings introduced in GCC 6 - 8",
                 "type": "bool"
+            },
+            {
+                "children": [],
+                "depends_on": null,
+                "help": "If enabled, RTL files will be produced during compilation. These files\ncan be used by other tools, for example to calculate call graphs.",
+                "id": "COMPILER_DUMP_RTL_FILES",
+                "name": "COMPILER_DUMP_RTL_FILES",
+                "range": null,
+                "title": "Dump RTL files during compilation",
+                "type": "bool"
             }
         ],
         "depends_on": null,
@@ -1830,6 +2040,16 @@
             },
             {
                 "children": [
+                    {
+                        "children": [],
+                        "depends_on": "!FREERTOS_UNICORE && ESP32_SPIRAM_SUPPORT",
+                        "help": null,
+                        "id": "ESP32_ECO3_CACHE_LOCK_FIX",
+                        "name": "ESP32_ECO3_CACHE_LOCK_FIX",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
                     {
                         "children": [
                             {
@@ -1964,6 +2184,16 @@
                                                 "name": "SPIRAM_TYPE_AUTO",
                                                 "range": null,
                                                 "title": "Auto-detect",
+                                                "type": "bool"
+                                            },
+                                            {
+                                                "children": [],
+                                                "depends_on": "<choice SPIRAM_TYPE>",
+                                                "help": null,
+                                                "id": "SPIRAM_TYPE_ESPPSRAM16",
+                                                "name": "SPIRAM_TYPE_ESPPSRAM16",
+                                                "range": null,
+                                                "title": "ESP-PSRAM16 or APS1604",
                                                 "type": "bool"
                                             },
                                             {
@@ -2121,10 +2351,7 @@
                                         "help": "If malloc() is capable of also allocating SPI-connected ram, its allocation strategy will prefer to\nallocate chunks less than this size in internal memory, while allocations larger than this will be\ndone from external RAM. If allocation from the preferred region fails, an attempt is made to allocate\nfrom the non-preferred region instead, so malloc() will not suddenly fail when either internal or\nexternal memory is full.",
                                         "id": "SPIRAM_MALLOC_ALWAYSINTERNAL",
                                         "name": "SPIRAM_MALLOC_ALWAYSINTERNAL",
-                                        "range": [
-                                            0,
-                                            131072
-                                        ],
+                                        "range": null,
                                         "title": "Maximum malloc() size, in bytes, to always put in internal memory",
                                         "type": "int"
                                     },
@@ -2144,17 +2371,14 @@
                                         "help": "Because the external/internal RAM allocation strategy is not always perfect, it sometimes may happen\nthat the internal memory is entirely filled up. This causes allocations that are specifically done in\ninternal memory, for example the stack for new tasks or memory to service DMA or have memory that's\nalso available when SPI cache is down, to fail. This option reserves a pool specifically for requests\nlike that; the memory in this pool is not given out when a normal malloc() is called.\n\nSet this to 0 to disable this feature.\n\nNote that because FreeRTOS stacks are forced to internal memory, they will also use this memory pool;\nbe sure to keep this in mind when adjusting this value.\n\nNote also that the DMA reserved pool may not be one single contiguous memory region, depending on the\nconfigured size and the static memory usage of the app.",
                                         "id": "SPIRAM_MALLOC_RESERVE_INTERNAL",
                                         "name": "SPIRAM_MALLOC_RESERVE_INTERNAL",
-                                        "range": [
-                                            0,
-                                            262144
-                                        ],
+                                        "range": null,
                                         "title": "Reserve this amount of bytes for data that specifically needs to be in DMA or internal memory",
                                         "type": "int"
                                     },
                                     {
                                         "children": [],
-                                        "depends_on": "SPIRAM && ESP32_SPIRAM_SUPPORT",
-                                        "help": "If enabled the option,and add EXT_RAM_ATTR defined your variable,then your variable will be placed in\nPSRAM instead of internal memory, and placed most of variables of lwip,net802.11,pp,bluedroid library\nto external memory defaultly.",
+                                        "depends_on": "SPIRAM && IDF_TARGET_ESP32 && ESP32_SPIRAM_SUPPORT",
+                                        "help": "If enabled, variables with EXT_RAM_ATTR attribute will be placed in SPIRAM instead of internal DRAM.\nBSS section of `lwip`, `net80211`, `pp`, `bt` libraries will be automatically placed\nin SPIRAM. BSS sections from other object files and libraries can also be placed in SPIRAM through\nlinker fragment scheme `extram_bss`.\n\nNote that the variables placed in SPIRAM using EXT_RAM_ATTR will be zero initialized.",
                                         "id": "SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY",
                                         "name": "SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY",
                                         "range": null,
@@ -2237,10 +2461,7 @@
                                                 "help": "Select the amount of banks reserved for bank switching. Note that the amount of RAM allocatable with\nmalloc/esp_heap_alloc_caps will decrease by 32K for each page reserved here.\n\nNote that this reservation is only actually done if your program actually uses the himem API. Without\nany himem calls, the reservation is not done and the original amount of memory will be available\nto malloc/esp_heap_alloc_caps.",
                                                 "id": "SPIRAM_BANKSWITCH_RESERVE",
                                                 "name": "SPIRAM_BANKSWITCH_RESERVE",
-                                                "range": [
-                                                    1,
-                                                    62
-                                                ],
+                                                "range": null,
                                                 "title": "Amount of 32K pages to reserve for bank switching",
                                                 "type": "int"
                                             }
@@ -2311,10 +2532,7 @@
                                                 "help": "The PSRAM CLOCK IO can be any unused GPIO, user can config it based on hardware design. If user use\n1.8V flash and 1.8V psram, this value can only be one of 6, 7, 8, 9, 10, 11, 16, 17.",
                                                 "id": "D0WD_PSRAM_CLK_IO",
                                                 "name": "D0WD_PSRAM_CLK_IO",
-                                                "range": [
-                                                    0,
-                                                    33
-                                                ],
+                                                "range": null,
                                                 "title": "PSRAM CLK IO number",
                                                 "type": "int"
                                             },
@@ -2324,10 +2542,7 @@
                                                 "help": "The PSRAM CS IO can be any unused GPIO, user can config it based on hardware design. If user use\n1.8V flash and 1.8V psram, this value can only be one of 6, 7, 8, 9, 10, 11, 16, 17.",
                                                 "id": "D0WD_PSRAM_CS_IO",
                                                 "name": "D0WD_PSRAM_CS_IO",
-                                                "range": [
-                                                    0,
-                                                    33
-                                                ],
+                                                "range": null,
                                                 "title": "PSRAM CS IO number",
                                                 "type": "int"
                                             }
@@ -2345,10 +2560,7 @@
                                                 "help": "User can config it based on hardware design. For ESP32-D2WD chip, the psram can only be 1.8V psram,\nso this value can only be one of 6, 7, 8, 9, 10, 11, 16, 17.",
                                                 "id": "D2WD_PSRAM_CLK_IO",
                                                 "name": "D2WD_PSRAM_CLK_IO",
-                                                "range": [
-                                                    0,
-                                                    33
-                                                ],
+                                                "range": null,
                                                 "title": "PSRAM CLK IO number",
                                                 "type": "int"
                                             },
@@ -2358,10 +2570,7 @@
                                                 "help": "User can config it based on hardware design. For ESP32-D2WD chip, the psram can only be 1.8V psram,\nso this value can only be one of 6, 7, 8, 9, 10, 11, 16, 17.",
                                                 "id": "D2WD_PSRAM_CS_IO",
                                                 "name": "D2WD_PSRAM_CS_IO",
-                                                "range": [
-                                                    0,
-                                                    33
-                                                ],
+                                                "range": null,
                                                 "title": "PSRAM CS IO number",
                                                 "type": "int"
                                             }
@@ -2379,10 +2588,7 @@
                                                 "help": "The PSRAM CS IO can be any unused GPIO, user can config it based on hardware design.\n\nFor ESP32-PICO chip, the psram share clock with flash, so user do not need to configure the clock\nIO.\nFor the reference hardware design, please refer to\nhttps://www.espressif.com/sites/default/files/documentation/esp32-pico-d4_datasheet_en.pdf",
                                                 "id": "PICO_PSRAM_CS_IO",
                                                 "name": "PICO_PSRAM_CS_IO",
-                                                "range": [
-                                                    0,
-                                                    33
-                                                ],
+                                                "range": null,
                                                 "title": "PSRAM CS IO number",
                                                 "type": "int"
                                             }
@@ -2394,15 +2600,22 @@
                                     },
                                     {
                                         "children": [],
-                                        "depends_on": "(ESPTOOLPY_FLASHMODE_DIO || ESPTOOLPY_FLASHMODE_DOUT) && ESP32_SPIRAM_SUPPORT",
-                                        "help": "This value is ignored unless flash mode is set to DIO or DOUT and the SPI flash pins have been\noverriden by setting the eFuses SPI_PAD_CONFIG_xxx.\n\nWhen this is the case, the eFuse config only defines 3 of the 4 Quad I/O data pins. The WP pin (aka\nESP32 pin \"SD_DATA_3\" or SPI flash pin \"IO2\") is not specified in eFuse. And the psram only has QPI\nmode, the WP pin is necessary, so we need to configure this value here.\n\nWhen flash mode is set to QIO or QOUT, the PSRAM WP pin will be set as the value configured in\nbootloader.\n\nFor ESP32-PICO chip, the default value of this config should be 7.",
+                                        "depends_on": "IDF_TARGET_ESP32 && (ESPTOOLPY_FLASHMODE_DIO || ESPTOOLPY_FLASHMODE_DOUT) && ESP32_SPIRAM_SUPPORT",
+                                        "help": "This setting is only used if the SPI flash pins have been overridden by setting the eFuses\nSPI_PAD_CONFIG_xxx, and the SPI flash mode is DIO or DOUT.\n\nWhen this is the case, the eFuse config only defines 3 of the 4 Quad I/O data pins. The WP pin (aka\nESP32 pin \"SD_DATA_3\" or SPI flash pin \"IO2\") is not specified in eFuse. The psram only has QPI\nmode, so a WP pin setting is necessary.\n\nIf this config item is set to N (default), the correct WP pin will be automatically used for any\nEspressif chip or module with integrated flash. If a custom setting is needed, set this config item\nto Y and specify the GPIO number connected to the WP pin.\n\nWhen flash mode is set to QIO or QOUT, the PSRAM WP pin will be set the same as the SPI Flash WP pin\nconfigured in the bootloader.",
+                                        "id": "SPIRAM_CUSTOM_SPIWP_SD3_PIN",
+                                        "name": "SPIRAM_CUSTOM_SPIWP_SD3_PIN",
+                                        "range": null,
+                                        "title": "Use custom SPI PSRAM WP(SD3) Pin when flash pins set in eFuse (read help)",
+                                        "type": "bool"
+                                    },
+                                    {
+                                        "children": [],
+                                        "depends_on": "IDF_TARGET_ESP32 && (ESPTOOLPY_FLASHMODE_DIO || ESPTOOLPY_FLASHMODE_DOUT) && ESP32_SPIRAM_SUPPORT",
+                                        "help": "The option \"Use custom SPI PSRAM WP(SD3) pin\" must be set or this value is ignored\n\nIf burning a customized set of SPI flash pins in eFuse and using DIO or DOUT mode for flash, set this\nvalue to the GPIO number of the SPIRAM WP pin.",
                                         "id": "SPIRAM_SPIWP_SD3_PIN",
                                         "name": "SPIRAM_SPIWP_SD3_PIN",
-                                        "range": [
-                                            0,
-                                            33
-                                        ],
-                                        "title": "SPI PSRAM WP(SD3) Pin when customising pins via eFuse (read help)",
+                                        "range": null,
+                                        "title": "Custom SPI PSRAM WP(SD3) Pin",
                                         "type": "int"
                                     },
                                     {
@@ -2505,7 +2718,7 @@
                             }
                         ],
                         "depends_on": null,
-                        "help": "Configure the number of universally administered (by IEEE) MAC addresses.\nDuring initialisation, MAC addresses for each network interface are generated or derived from a\nsingle base MAC address.\nIf the number of universal MAC addresses is four, all four interfaces (WiFi station, WiFi softap,\nBluetooth and Ethernet) receive a universally administered MAC address. These are generated\nsequentially by adding 0, 1, 2 and 3 (respectively) to the final octet of the base MAC address.\nIf the number of universal MAC addresses is two, only two interfaces (WiFi station and Bluetooth)\nreceive a universally administered MAC address. These are generated sequentially by adding 0\nand 1 (respectively) to the base MAC address. The remaining two interfaces (WiFi softap and Ethernet)\nreceive local MAC addresses. These are derived from the universal WiFi station and Bluetooth MAC\naddresses, respectively.\nWhen using the default (Espressif-assigned) base MAC address, either setting can be used. When using\na custom universal MAC address range, the correct setting will depend on the allocation of MAC\naddresses in this range (either 2 or 4 per device.)",
+                        "help": "Configure the number of universally administered (by IEEE) MAC addresses.\nDuring initialization, MAC addresses for each network interface are generated or derived from a\nsingle base MAC address.\nIf the number of universal MAC addresses is four, all four interfaces (WiFi station, WiFi softap,\nBluetooth and Ethernet) receive a universally administered MAC address. These are generated\nsequentially by adding 0, 1, 2 and 3 (respectively) to the final octet of the base MAC address.\nIf the number of universal MAC addresses is two, only two interfaces (WiFi station and Bluetooth)\nreceive a universally administered MAC address. These are generated sequentially by adding 0\nand 1 (respectively) to the base MAC address. The remaining two interfaces (WiFi softap and Ethernet)\nreceive local MAC addresses. These are derived from the universal WiFi station and Bluetooth MAC\naddresses, respectively.\nWhen using the default (Espressif-assigned) base MAC address, either setting can be used. When using\na custom universal MAC address range, the correct setting will depend on the allocation of MAC\naddresses in this range (either 2 or 4 per device.)",
                         "id": "component-config-esp32-specific-number-of-universally-administered-by-ieee-mac-address",
                         "name": "ESP32_UNIVERSAL_MAC_ADDRESSES",
                         "title": "Number of universally administered (by IEEE) MAC address",
@@ -2544,56 +2757,6 @@
                         "range": null,
                         "title": "Enable Ultra Low Power (ULP) Coprocessor",
                         "type": "bool"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP32_PANIC>",
-                                "help": "Outputs the relevant registers over the serial port and halt the\nprocessor. Needs a manual reset to restart.",
-                                "id": "ESP32_PANIC_PRINT_HALT",
-                                "name": "ESP32_PANIC_PRINT_HALT",
-                                "range": null,
-                                "title": "Print registers and halt",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP32_PANIC>",
-                                "help": "Outputs the relevant registers over the serial port and immediately\nreset the processor.",
-                                "id": "ESP32_PANIC_PRINT_REBOOT",
-                                "name": "ESP32_PANIC_PRINT_REBOOT",
-                                "range": null,
-                                "title": "Print registers and reboot",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP32_PANIC>",
-                                "help": "Just resets the processor without outputting anything",
-                                "id": "ESP32_PANIC_SILENT_REBOOT",
-                                "name": "ESP32_PANIC_SILENT_REBOOT",
-                                "range": null,
-                                "title": "Silent reboot",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP32_PANIC>",
-                                "help": "Invoke gdbstub on the serial port, allowing for gdb to attach to it to do a postmortem\nof the crash.",
-                                "id": "ESP32_PANIC_GDBSTUB",
-                                "name": "ESP32_PANIC_GDBSTUB",
-                                "range": null,
-                                "title": "Invoke GDBStub",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "If FreeRTOS detects unexpected behaviour or an unhandled exception, the panic handler is\ninvoked. Configure the panic handlers action here.",
-                        "id": "component-config-esp32-specific-panic-handler-behaviour",
-                        "name": "ESP32_PANIC",
-                        "title": "Panic handler behaviour",
-                        "type": "choice"
                     },
                     {
                         "children": [],
@@ -2719,7 +2882,7 @@
                     {
                         "children": [],
                         "depends_on": "ESP32_BROWNOUT_DET",
-                        "help": "When brownout reset occurs, reduce PHY TX power to keep the code running\n\n# Note about the use of \"FRC1\" name: currently FRC1 timer is not used for\n# high resolution timekeeping anymore. Instead the esp_timer API, implemented\n# using FRC2 timer, is used.\n# FRC1 name in the option name is kept for compatibility.",
+                        "help": "When brownout reset occurs, reduce PHY TX power to keep the code running\n\n# Note about the use of \"FRC1\" name: currently FRC1 timer is not used for\n# high resolution timekeeping anymore. Instead the esp_timer API is used.\n# FRC1 name in the option name is kept for compatibility.",
                         "id": "ESP32_REDUCE_PHY_TX_POWER",
                         "name": "ESP32_REDUCE_PHY_TX_POWER",
                         "range": null,
@@ -2805,7 +2968,7 @@
                                 "id": "ESP32_RTC_CLK_SRC_EXT_OSC",
                                 "name": "ESP32_RTC_CLK_SRC_EXT_OSC",
                                 "range": null,
-                                "title": "External 32kHz oscillator at 32K_XP pin",
+                                "title": "External 32kHz oscillator at 32K_XN pin",
                                 "type": "bool"
                             },
                             {
@@ -2820,21 +2983,51 @@
                             }
                         ],
                         "depends_on": null,
-                        "help": "Choose which clock is used as RTC clock source.\n\n- \"Internal 150kHz oscillator\" option provides lowest deep sleep current\n  consumption, and does not require extra external components. However\n  frequency stability with respect to temperature is poor, so time may\n  drift in deep/light sleep modes.\n- \"External 32kHz crystal\" provides better frequency stability, at the\n  expense of slightly higher (1uA) deep sleep current consumption.\n- \"External 32kHz oscillator\" allows using 32kHz clock generated by an\n  external circuit. In this case, external clock signal must be connected\n  to 32K_XP pin. Amplitude should be <1.2V in case of sine wave signal,\n  and <1V in case of square wave signal. Common mode voltage should be\n  0.1 < Vcm < 0.5Vamp, where Vamp is the signal amplitude.\n  Additionally, 1nF capacitor must be connected between 32K_XN pin and\n  ground. 32K_XN pin can not be used as a GPIO in this case.\n- \"Internal 8.5MHz oscillator divided by 256\" option results in higher\n  deep sleep current (by 5uA) but has better frequency stability than\n  the internal 150kHz oscillator. It does not require external components.",
+                        "help": "Choose which clock is used as RTC clock source.\n\n- \"Internal 150kHz oscillator\" option provides lowest deep sleep current\n  consumption, and does not require extra external components. However\n  frequency stability with respect to temperature is poor, so time may\n  drift in deep/light sleep modes.\n- \"External 32kHz crystal\" provides better frequency stability, at the\n  expense of slightly higher (1uA) deep sleep current consumption.\n- \"External 32kHz oscillator\" allows using 32kHz clock generated by an\n  external circuit. In this case, external clock signal must be connected\n  to 32K_XN pin. Amplitude should be <1.2V in case of sine wave signal,\n  and <1V in case of square wave signal. Common mode voltage should be\n  0.1 < Vcm < 0.5Vamp, where Vamp is the signal amplitude.\n  Additionally, 1nF capacitor must be connected between 32K_XP pin and\n  ground. 32K_XP pin can not be used as a GPIO in this case.\n- \"Internal 8.5MHz oscillator divided by 256\" option results in higher\n  deep sleep current (by 5uA) but has better frequency stability than\n  the internal 150kHz oscillator. It does not require external components.",
                         "id": "component-config-esp32-specific-rtc-clock-source",
                         "name": "ESP32_RTC_CLK_SRC",
                         "title": "RTC clock source",
                         "type": "choice"
                     },
                     {
-                        "children": [],
-                        "depends_on": "ESP32_RTC_CLK_SRC_EXT_CRYS",
-                        "help": "Choose which additional current is used for rtc external crystal.\n\n- With some 32kHz crystal configurations, the X32N and X32P pins may not\n  have enough drive strength to keep the crystal oscillating during deep sleep.\n  If this option is enabled, additional current from touchpad 9 is provided\n  internally to drive the 32kHz crystal. If this option is enabled, deep sleep current\n  is slightly higher (4-5uA) and the touchpad and ULP wakeup sources are not available.",
-                        "id": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT",
-                        "name": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT",
-                        "range": null,
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_METHOD>",
+                                "help": null,
+                                "id": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_NONE",
+                                "name": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_NONE",
+                                "range": null,
+                                "title": "None",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_METHOD>",
+                                "help": null,
+                                "id": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT",
+                                "name": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT",
+                                "range": null,
+                                "title": "Method 1",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_METHOD>",
+                                "help": null,
+                                "id": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_V2",
+                                "name": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_V2",
+                                "range": null,
+                                "title": "Method 2",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": "ESP32_RTC_CLK_SRC_EXT_CRYS && ESP32_REV_MIN <= 1",
+                        "help": "With some 32kHz crystal configurations, the X32N and X32P pins may not have enough\ndrive strength to keep the crystal oscillating. Choose the method to provide\nadditional current from touchpad 9 to the external 32kHz crystal. Note that\nthe deep sleep current is slightly high (4-5uA) and the touchpad and the\nwakeup sources of both touchpad and ULP are not available in method 1 and method 2.\n\nThis problem is fixed in ESP32 ECO 3, so this workaround is not needed. Setting the\nproject configuration to minimum revision ECO3 will disable this option, , allow\nall wakeup sources, and save some code size.\n\n- \"None\" option will not provide additional current to external crystal\n- \"Method 1\" option can't ensure 100% to solve the external 32k crystal start failed\n  issue, but the touchpad can work in this method.\n- \"Method 2\" option can solve the external 32k issue, but the touchpad can't work\n  in this method.",
+                        "id": "component-config-esp32-specific-additional-current-for-external-32khz-crystal",
+                        "name": "ESP32_RTC_EXT_CRYST_ADDIT_CURRENT_METHOD",
                         "title": "Additional current for external 32kHz crystal",
-                        "type": "bool"
+                        "type": "choice"
                     },
                     {
                         "children": [],
@@ -2857,16 +3050,6 @@
                         "name": "ESP32_RTC_XTAL_CAL_RETRY",
                         "range": null,
                         "title": "Number of attempts to repeat 32k XTAL calibration",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "ESP32_RTC_CLK_SRC_EXT_CRYS",
-                        "help": "To reduce the startup time of an external RTC crystal,\nwe bootstrap it with a 32kHz square wave for a fixed number of cycles.\nSetting 0 will disable bootstrapping (if disabled, the crystal may take\nlonger to start up or fail to oscillate under some conditions).\n\nIf this value is too high, a faulty crystal may initially start and then fail.\nIf this value is too low, an otherwise good crystal may not start.\n\nTo accurately determine if the crystal has started,\nset a larger \"Number of cycles for RTC_SLOW_CLK calibration\" (about 3000).",
-                        "id": "ESP32_RTC_XTAL_BOOTSTRAP_CYCLES",
-                        "name": "ESP32_RTC_XTAL_BOOTSTRAP_CYCLES",
-                        "range": null,
-                        "title": "Bootstrap cycles for external 32kHz crystal",
                         "type": "int"
                     },
                     {
@@ -2955,11 +3138,21 @@
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "Bootloaders before IDF v2.1 did less initialisation of the\nsystem clock. This setting needs to be enabled to build an app\nwhich can be booted by these older bootloaders.\n\nIf this setting is enabled, the app can be booted by any bootloader\nfrom IDF v1.0 up to the current version.\n\nIf this setting is disabled, the app can only be booted by bootloaders\nfrom IDF v2.1 or newer.\n\nEnabling this setting adds approximately 1KB to the app's IRAM usage.",
+                        "help": "Bootloaders before ESP-IDF v2.1 did less initialisation of the\nsystem clock. This setting needs to be enabled to build an app\nwhich can be booted by these older bootloaders.\n\nIf this setting is enabled, the app can be booted by any bootloader\nfrom IDF v1.0 up to the current version.\n\nIf this setting is disabled, the app can only be booted by bootloaders\nfrom IDF v2.1 or newer.\n\nEnabling this setting adds approximately 1KB to the app's IRAM usage.",
                         "id": "ESP32_COMPATIBLE_PRE_V2_1_BOOTLOADERS",
                         "name": "ESP32_COMPATIBLE_PRE_V2_1_BOOTLOADERS",
                         "range": null,
-                        "title": "App compatible with bootloaders before IDF v2.1",
+                        "title": "App compatible with bootloaders before ESP-IDF v2.1",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Partition tables before ESP-IDF V3.1 do not contain an MD5 checksum\nfield, and the bootloader before ESP-IDF v3.1 cannot read a partition\ntable that contains an MD5 checksum field.\n\nEnable this option only if your app needs to boot on a bootloader and/or\npartition table that was generated from a version *before* ESP-IDF v3.1.\n\nIf this option and Flash Encryption are enabled at the same time, and any\ndata partitions in the partition table are marked Encrypted, then the\npartition encrypted flag should be manually verified in the app before accessing\nthe partition (see CVE-2021-27926).",
+                        "id": "ESP32_COMPATIBLE_PRE_V3_1_BOOTLOADERS",
+                        "name": "ESP32_COMPATIBLE_PRE_V3_1_BOOTLOADERS",
+                        "range": null,
+                        "title": "App compatible with bootloader and partition table before ESP-IDF v3.1",
                         "type": "bool"
                     },
                     {
@@ -3012,6 +3205,16 @@
                         "range": null,
                         "title": "Disable the interrupt level for the DPORT workarounds",
                         "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "FREERTOS_UNICORE",
+                        "help": "If enabled, application can use IRAM as byte accessible region for storing data\n(Note: IRAM region cannot be used as task stack)\n\nThis is possible due to handling of exceptions `LoadStoreError (3)` and `LoadStoreAlignmentError (9)`\nEach unaligned read/write access will incur a penalty of maximum of 167 CPU cycles.",
+                        "id": "ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY",
+                        "name": "ESP32_IRAM_AS_8BIT_ACCESSIBLE_MEMORY",
+                        "range": null,
+                        "title": "Enable IRAM as 8 bit accessible memory",
+                        "type": "bool"
                     }
                 ],
                 "depends_on": null,
@@ -3021,75 +3224,6 @@
             },
             {
                 "children": [
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "PM_ENABLE",
-                                "help": "If enabled, startup code configures dynamic frequency scaling.\nMax CPU frequency is set to CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ setting,\nmin frequency is set to XTAL frequency.\nIf disabled, DFS will not be active until the application\nconfigures it using esp_pm_configure function.",
-                                "id": "PM_DFS_INIT_AUTO",
-                                "name": "PM_DFS_INIT_AUTO",
-                                "range": null,
-                                "title": "Enable dynamic frequency scaling (DFS) at startup",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "PM_ENABLE && (ESP32_TIME_SYSCALL_USE_RTC || ESP32_TIME_SYSCALL_USE_RTC_FRC1)",
-                                "help": "When APB clock frequency changes, high-resolution timer (esp_timer)\nscale and base value need to be adjusted. Each adjustment may cause\nsmall error, and over time such small errors may cause time drift.\nIf this option is enabled, RTC timer will be used as a reference to\ncompensate for the drift.\nIt is recommended that this option is only used if 32k XTAL is selected\nas RTC clock source.",
-                                "id": "PM_USE_RTC_TIMER_REF",
-                                "name": "PM_USE_RTC_TIMER_REF",
-                                "range": null,
-                                "title": "Use RTC timer to prevent time drift (EXPERIMENTAL)",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "PM_ENABLE",
-                                "help": "If enabled, esp_pm_* functions will keep track of the amount of time\neach of the power management locks has been held, and esp_pm_dump_locks\nfunction will print this information.\nThis feature can be used to analyze which locks are preventing the chip\nfrom going into a lower power state, and see what time the chip spends\nin each power saving mode. This feature does incur some run-time\noverhead, so should typically be disabled in production builds.",
-                                "id": "PM_PROFILING",
-                                "name": "PM_PROFILING",
-                                "range": null,
-                                "title": "Enable profiling counters for PM locks",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "PM_ENABLE",
-                                "help": "If enabled, some GPIOs will be used to signal events such as RTOS ticks,\nfrequency switching, entry/exit from idle state. Refer to pm_trace.c\nfile for the list of GPIOs.\nThis feature is intended to be used when analyzing/debugging behavior\nof power management implementation, and should be kept disabled in\napplications.",
-                                "id": "PM_TRACE",
-                                "name": "PM_TRACE",
-                                "range": null,
-                                "title": "Enable debug tracing of PM using GPIOs",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "help": "If enabled, application is compiled with support for power management.\nThis option has run-time overhead (increased interrupt latency,\nlonger time to enter idle state), and it also reduces accuracy of\nRTOS ticks and timers used for timekeeping.\nEnable this option if application uses power management APIs.",
-                        "id": "PM_ENABLE",
-                        "name": "PM_ENABLE",
-                        "range": null,
-                        "title": "Support for power management",
-                        "type": "bool"
-                    }
-                ],
-                "depends_on": null,
-                "id": "component-config-power-management",
-                "title": "Power Management",
-                "type": "menu"
-            },
-            {
-                "children": [
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "If enabled, esp_timer_dump will dump information such as number of times the timer was started, number of\ntimes the timer has triggered, and the total time it took for the callback to run. This option has some\neffect on timer performance and the amount of memory used for timer storage, and should only be used for\ndebugging/testing purposes.",
-                        "id": "ESP_TIMER_PROFILING",
-                        "name": "ESP_TIMER_PROFILING",
-                        "range": null,
-                        "title": "Enable esp_timer profiling features",
-                        "type": "bool"
-                    },
                     {
                         "children": [],
                         "depends_on": null,
@@ -3156,19 +3290,6 @@
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "Configure the stack size of esp_timer/ets_timer task. This task is used\nto dispatch callbacks of timers created using ets_timer and esp_timer\nAPIs. If you are seing stack overflow errors in timer task, increase\nthis value.\n\nNote that this is not the same as FreeRTOS timer task. To configure\nFreeRTOS timer task size, see \"FreeRTOS timer task stack size\" option\nin \"FreeRTOS\" menu.",
-                        "id": "ESP_TIMER_TASK_STACK_SIZE",
-                        "name": "ESP_TIMER_TASK_STACK_SIZE",
-                        "range": [
-                            2048,
-                            65536
-                        ],
-                        "title": "High-resolution timer task stack size",
-                        "type": "int"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
                         "help": "Minimal value of size, in bytes, accepted to execute a expression\nwith shared stack.",
                         "id": "ESP_MINIMAL_SHARED_STACK_SIZE",
                         "name": "ESP_MINIMAL_SHARED_STACK_SIZE",
@@ -3185,7 +3306,17 @@
                                 "id": "ESP_CONSOLE_UART_DEFAULT",
                                 "name": "ESP_CONSOLE_UART_DEFAULT",
                                 "range": null,
-                                "title": "Default: UART0, TX=GPIO1, RX=GPIO3",
+                                "title": "Default: UART0",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "IDF_TARGET_ESP32S2 && !USB_ENABLED && <choice ESP_CONSOLE_UART>",
+                                "help": null,
+                                "id": "ESP_CONSOLE_USB_CDC",
+                                "name": "ESP_CONSOLE_USB_CDC",
+                                "range": null,
+                                "title": "USB CDC",
                                 "type": "bool"
                             },
                             {
@@ -3195,26 +3326,46 @@
                                 "id": "ESP_CONSOLE_UART_CUSTOM",
                                 "name": "ESP_CONSOLE_UART_CUSTOM",
                                 "range": null,
-                                "title": "Custom",
+                                "title": "Custom UART",
                                 "type": "bool"
                             },
                             {
                                 "children": [],
                                 "depends_on": "<choice ESP_CONSOLE_UART>",
                                 "help": null,
-                                "id": "ESP_CONSOLE_UART_NONE",
-                                "name": "ESP_CONSOLE_UART_NONE",
+                                "id": "ESP_CONSOLE_NONE",
+                                "name": "ESP_CONSOLE_NONE",
                                 "range": null,
                                 "title": "None",
                                 "type": "bool"
                             }
                         ],
                         "depends_on": null,
-                        "help": "Select whether to use UART for console output (through stdout and stderr).\n\n- Default is to use UART0 on pins GPIO1(TX) and GPIO3(RX).\n- If \"Custom\" is selected, UART0 or UART1 can be chosen,\n  and any pins can be selected.\n- If \"None\" is selected, there will be no console output on any UART, except\n  for initial output from ROM bootloader. This output can be further suppressed by\n  bootstrapping GPIO13 pin to low logic level.",
-                        "id": "component-config-common-esp-related-uart-for-console-output",
+                        "help": "Select where to send console output (through stdout and stderr).\n\n- Default is to use UART0 on pre-defined GPIOs.\n- If \"Custom\" is selected, UART0 or UART1 can be chosen,\n  and any pins can be selected.\n- If \"None\" is selected, there will be no console output on any UART, except\n  for initial output from ROM bootloader. This ROM output can be suppressed by\n  GPIO strapping or EFUSE, refer to chip datasheet for details.\n- On chips with USB peripheral, \"USB CDC\" option redirects output to the\n  CDC port. This option uses the CDC driver in the chip ROM.\n  This option is incompatible with TinyUSB stack.",
+                        "id": "component-config-common-esp-related-channel-for-console-output",
                         "name": "ESP_CONSOLE_UART",
-                        "title": "UART for console output",
+                        "title": "Channel for console output",
                         "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_CONSOLE_UART",
+                        "name": "ESP_CONSOLE_UART",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_CONSOLE_MULTIPLE_UART",
+                        "name": "ESP_CONSOLE_MULTIPLE_UART",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
                     },
                     {
                         "children": [
@@ -3239,8 +3390,8 @@
                                 "type": "bool"
                             }
                         ],
-                        "depends_on": "ESP_CONSOLE_UART_CUSTOM",
-                        "help": "Due of a ROM bug, UART2 is not supported for console output\nvia ets_printf.",
+                        "depends_on": "ESP_CONSOLE_UART_CUSTOM && ESP_CONSOLE_MULTIPLE_UART",
+                        "help": "This UART peripheral is used for console output from the ESP-IDF Bootloader and the app.\n\nIf the configuration is different in the Bootloader binary compared to the app binary, UART\nis reconfigured after the bootloader exits and the app starts.\n\nDue to an ESP32 ROM bug, UART2 is not supported for console output\nvia esp_rom_printf.",
                         "id": "component-config-common-esp-related-uart-peripheral-to-use-for-console-output-0-1-",
                         "name": "ESP_CONSOLE_UART_NUM",
                         "title": "UART peripheral to use for console output (0-1)",
@@ -3259,7 +3410,7 @@
                     {
                         "children": [],
                         "depends_on": "ESP_CONSOLE_UART_CUSTOM",
-                        "help": null,
+                        "help": "This GPIO is used for console UART TX output in the ESP-IDF Bootloader and the app (including\nboot log output and default standard output and standard error of the app).\n\nIf the configuration is different in the Bootloader binary compared to the app binary, UART\nis reconfigured after the bootloader exits and the app starts.",
                         "id": "ESP_CONSOLE_UART_TX_GPIO",
                         "name": "ESP_CONSOLE_UART_TX_GPIO",
                         "range": null,
@@ -3269,7 +3420,7 @@
                     {
                         "children": [],
                         "depends_on": "ESP_CONSOLE_UART_CUSTOM",
-                        "help": null,
+                        "help": "This GPIO is used for UART RX input in the ESP-IDF Bootloader and the app (including\ndefault default standard input of the app).\n\nNote: The default ESP-IDF Bootloader configures this pin but doesn't read anything from the UART.\n\nIf the configuration is different in the Bootloader binary compared to the app binary, UART\nis reconfigured after the bootloader exits and the app starts.",
                         "id": "ESP_CONSOLE_UART_RX_GPIO",
                         "name": "ESP_CONSOLE_UART_RX_GPIO",
                         "range": null,
@@ -3278,8 +3429,8 @@
                     },
                     {
                         "children": [],
-                        "depends_on": "!ESP_CONSOLE_UART_NONE",
-                        "help": null,
+                        "depends_on": "ESP_CONSOLE_UART",
+                        "help": "This baud rate is used by both the ESP-IDF Bootloader and the app (including\nboot log output and default standard input/output/error of the app).\n\nThe app's maximum baud rate depends on the UART clock source. If Power Management is disabled,\nthe UART clock source is the APB clock and all baud rates in the available range will be sufficiently\naccurate. If Power Management is enabled, REF_TICK clock source is used so the baud rate is divided\nfrom 1MHz. Baud rates above 1Mbps are not possible and values between 500Kbps and 1Mbps may not be\naccurate.\n\nIf the configuration is different in the Bootloader binary compared to the app binary, UART\nis reconfigured after the bootloader exits and the app starts.",
                         "id": "ESP_CONSOLE_UART_BAUDRATE",
                         "name": "ESP_CONSOLE_UART_BAUDRATE",
                         "range": [
@@ -3288,6 +3439,26 @@
                         ],
                         "title": "UART console baud rate",
                         "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_CONSOLE_USB_CDC",
+                        "help": "Set the size of USB CDC RX buffer. Increase the buffer size if your application\nis often receiving data over USB CDC.",
+                        "id": "ESP_CONSOLE_USB_CDC_RX_BUF_SIZE",
+                        "name": "ESP_CONSOLE_USB_CDC_RX_BUF_SIZE",
+                        "range": null,
+                        "title": "Size of USB CDC RX buffer",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_CONSOLE_USB_CDC",
+                        "help": "If enabled, esp_rom_printf and ESP_EARLY_LOG output will also be sent over USB CDC.\nDisabling this option saves about 1kB or RAM.",
+                        "id": "ESP_CONSOLE_USB_CDC_SUPPORT_ETS_PRINTF",
+                        "name": "ESP_CONSOLE_USB_CDC_SUPPORT_ETS_PRINTF",
+                        "range": null,
+                        "title": "Enable esp_rom_printf / ESP_EARLY_LOG via USB CDC",
+                        "type": "bool"
                     },
                     {
                         "children": [
@@ -3379,7 +3550,7 @@
                     },
                     {
                         "children": [],
-                        "depends_on": "IDF_TARGET_ESP32",
+                        "depends_on": null,
                         "help": "If this option is disabled (default), the panic handler code is placed in flash not IRAM.\nThis means that if ESP-IDF crashes while flash cache is disabled, the panic handler will\nautomatically re-enable flash cache before running GDB Stub or Core Dump. This adds some minor\nrisk, if the flash cache status is also corrupted during the crash.\n\nIf this option is enabled, the panic handler code is placed in IRAM. This allows the panic\nhandler to run without needing to re-enable cache first. This may be necessary to debug some\ncomplex issues with crashes while flash cache is disabled (for example, when writing to\nSPI flash.)",
                         "id": "ESP_PANIC_HANDLER_IRAM",
                         "name": "ESP_PANIC_HANDLER_IRAM",
@@ -3396,11 +3567,218 @@
                         "range": null,
                         "title": null,
                         "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_MAC_ADDR_UNIVERSE_WIFI_STA",
+                        "name": "ESP_MAC_ADDR_UNIVERSE_WIFI_STA",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_MAC_ADDR_UNIVERSE_WIFI_AP",
+                        "name": "ESP_MAC_ADDR_UNIVERSE_WIFI_AP",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_MAC_ADDR_UNIVERSE_BT",
+                        "name": "ESP_MAC_ADDR_UNIVERSE_BT",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_MAC_ADDR_UNIVERSE_ETH",
+                        "name": "ESP_MAC_ADDR_UNIVERSE_ETH",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_ALLOW_BSS_SEG_EXTERNAL_MEMORY",
+                        "name": "ESP_ALLOW_BSS_SEG_EXTERNAL_MEMORY",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
                     }
                 ],
                 "depends_on": null,
                 "id": "component-config-common-esp-related",
                 "title": "Common ESP-related",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_SYSTEM_PANIC>",
+                                "help": "Outputs the relevant registers over the serial port and halt the\nprocessor. Needs a manual reset to restart.",
+                                "id": "ESP_SYSTEM_PANIC_PRINT_HALT",
+                                "name": "ESP_SYSTEM_PANIC_PRINT_HALT",
+                                "range": null,
+                                "title": "Print registers and halt",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_SYSTEM_PANIC>",
+                                "help": "Outputs the relevant registers over the serial port and immediately\nreset the processor.",
+                                "id": "ESP_SYSTEM_PANIC_PRINT_REBOOT",
+                                "name": "ESP_SYSTEM_PANIC_PRINT_REBOOT",
+                                "range": null,
+                                "title": "Print registers and reboot",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_SYSTEM_PANIC>",
+                                "help": "Just resets the processor without outputting anything",
+                                "id": "ESP_SYSTEM_PANIC_SILENT_REBOOT",
+                                "name": "ESP_SYSTEM_PANIC_SILENT_REBOOT",
+                                "range": null,
+                                "title": "Silent reboot",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice ESP_SYSTEM_PANIC>",
+                                "help": "Invoke gdbstub on the serial port, allowing for gdb to attach to it to do a postmortem\nof the crash.",
+                                "id": "ESP_SYSTEM_PANIC_GDBSTUB",
+                                "name": "ESP_SYSTEM_PANIC_GDBSTUB",
+                                "range": null,
+                                "title": "Invoke GDBStub",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "If FreeRTOS detects unexpected behaviour or an unhandled exception, the panic handler is\ninvoked. Configure the panic handler's action here.",
+                        "id": "component-config-esp-system-settings-panic-handler-behaviour",
+                        "name": "ESP_SYSTEM_PANIC",
+                        "title": "Panic handler behaviour",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Only initialize and use the main core.",
+                        "id": "ESP_SYSTEM_SINGLE_CORE_MODE",
+                        "name": "ESP_SYSTEM_SINGLE_CORE_MODE",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_SYSTEM_RTC_EXT_XTAL",
+                        "name": "ESP_SYSTEM_RTC_EXT_XTAL",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_SYSTEM_RTC_EXT_XTAL",
+                        "help": "To reduce the startup time of an external RTC crystal,\nwe bootstrap it with a 32kHz square wave for a fixed number of cycles.\nSetting 0 will disable bootstrapping (if disabled, the crystal may take\nlonger to start up or fail to oscillate under some conditions).\n\nIf this value is too high, a faulty crystal may initially start and then fail.\nIf this value is too low, an otherwise good crystal may not start.\n\nTo accurately determine if the crystal has started,\nset a larger \"Number of cycles for RTC_SLOW_CLK calibration\" (about 3000).",
+                        "id": "ESP_SYSTEM_RTC_EXT_XTAL_BOOTSTRAP_CYCLES",
+                        "name": "ESP_SYSTEM_RTC_EXT_XTAL_BOOTSTRAP_CYCLES",
+                        "range": null,
+                        "title": "Bootstrap cycles for external 32kHz crystal",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": null,
+                        "id": "ESP_SYSTEM_RTC_FAST_MEM_AS_HEAP_DEPCHECK",
+                        "name": "ESP_SYSTEM_RTC_FAST_MEM_AS_HEAP_DEPCHECK",
+                        "range": null,
+                        "title": null,
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "ESP_SYSTEM_RTC_FAST_MEM_AS_HEAP_DEPCHECK",
+                        "help": "This config option allows to add RTC fast memory region to system heap with capability\nsimilar to that of DRAM region but without DMA. This memory will be consumed first per\nheap initialization order by early startup services and scheduler related code. Speed\nwise RTC fast memory operates on APB clock and hence does not have much performance impact.",
+                        "id": "ESP_SYSTEM_ALLOW_RTC_FAST_MEM_AS_HEAP",
+                        "name": "ESP_SYSTEM_ALLOW_RTC_FAST_MEM_AS_HEAP",
+                        "range": null,
+                        "title": "Enable RTC fast memory for dynamic allocations",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "!SPIRAM",
+                        "help": "If enabled, chip will try to power down flash at light sleep, which costs more time when chip wakes up.\nCan only be enabled if there is no SPIRAM configured. This option will in fact consider VDD_SDIO auto power\nvalue (ESP_PD_OPTION_AUTO) as OFF. Also, it is possible to force a power domain to stay ON during light\nsleep by using esp_sleep_pd_config() function.",
+                        "id": "ESP_SYSTEM_PD_FLASH",
+                        "name": "ESP_SYSTEM_PD_FLASH",
+                        "range": null,
+                        "title": "PD flash at light sleep when there is no SPIRAM",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32C3",
+                        "help": "If enabled, the CPU will be powered down in light sleep. Enabling this option will consume\n1.68 KB of internal RAM and will reduce sleep current consumption by about 100 uA.",
+                        "id": "ESP_SYSTEM_PM_POWER_DOWN_CPU",
+                        "name": "ESP_SYSTEM_PM_POWER_DOWN_CPU",
+                        "range": null,
+                        "title": "Power down CPU in light sleep",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "children": [],
+                                        "depends_on": "ESP_SYSTEM_MEMPROT_FEATURE",
+                                        "help": "Once locked, memory protection settings cannot be changed anymore.\nThe lock is reset only on the chip startup.",
+                                        "id": "ESP_SYSTEM_MEMPROT_FEATURE_LOCK",
+                                        "name": "ESP_SYSTEM_MEMPROT_FEATURE_LOCK",
+                                        "range": null,
+                                        "title": "Lock memory protection settings",
+                                        "type": "bool"
+                                    }
+                                ],
+                                "depends_on": "IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S2",
+                                "help": "If enabled, the permission control module watches all the memory access and fires the panic handler\nif a permission violation is detected. This feature automatically splits\nthe SRAM memory into data and instruction segments and sets Read/Execute permissions\nfor the instruction part (below given splitting address) and Read/Write permissions\nfor the data part (above the splitting address). The memory protection is effective\non all access through the IRAM0 and DRAM0 buses.",
+                                "id": "ESP_SYSTEM_MEMPROT_FEATURE",
+                                "name": "ESP_SYSTEM_MEMPROT_FEATURE",
+                                "range": null,
+                                "title": "Enable memory protection",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "id": "component-config-esp-system-settings-memory-protection",
+                        "title": "Memory protection",
+                        "type": "menu"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-esp-system-settings",
+                "title": "ESP System Settings",
                 "type": "menu"
             },
             {
@@ -3537,6 +3915,104 @@
                         "children": [
                             {
                                 "children": [],
+                                "depends_on": "<choice NEWLIB_STDOUT_LINE_ENDING>",
+                                "help": null,
+                                "id": "NEWLIB_STDOUT_LINE_ENDING_CRLF",
+                                "name": "NEWLIB_STDOUT_LINE_ENDING_CRLF",
+                                "range": null,
+                                "title": "CRLF",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice NEWLIB_STDOUT_LINE_ENDING>",
+                                "help": null,
+                                "id": "NEWLIB_STDOUT_LINE_ENDING_LF",
+                                "name": "NEWLIB_STDOUT_LINE_ENDING_LF",
+                                "range": null,
+                                "title": "LF",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice NEWLIB_STDOUT_LINE_ENDING>",
+                                "help": null,
+                                "id": "NEWLIB_STDOUT_LINE_ENDING_CR",
+                                "name": "NEWLIB_STDOUT_LINE_ENDING_CR",
+                                "range": null,
+                                "title": "CR",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This option allows configuring the desired line endings sent to UART\nwhen a newline ('\\n', LF) appears on stdout.\nThree options are possible:\n\nCRLF: whenever LF is encountered, prepend it with CR\n\nLF: no modification is applied, stdout is sent as is\n\nCR: each occurence of LF is replaced with CR\n\nThis option doesn't affect behavior of the UART driver (drivers/uart.h).",
+                        "id": "component-config-newlib-line-ending-for-uart-output",
+                        "name": "NEWLIB_STDOUT_LINE_ENDING",
+                        "title": "Line ending for UART output",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [
+                            {
+                                "children": [],
+                                "depends_on": "<choice NEWLIB_STDIN_LINE_ENDING>",
+                                "help": null,
+                                "id": "NEWLIB_STDIN_LINE_ENDING_CRLF",
+                                "name": "NEWLIB_STDIN_LINE_ENDING_CRLF",
+                                "range": null,
+                                "title": "CRLF",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice NEWLIB_STDIN_LINE_ENDING>",
+                                "help": null,
+                                "id": "NEWLIB_STDIN_LINE_ENDING_LF",
+                                "name": "NEWLIB_STDIN_LINE_ENDING_LF",
+                                "range": null,
+                                "title": "LF",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice NEWLIB_STDIN_LINE_ENDING>",
+                                "help": null,
+                                "id": "NEWLIB_STDIN_LINE_ENDING_CR",
+                                "name": "NEWLIB_STDIN_LINE_ENDING_CR",
+                                "range": null,
+                                "title": "CR",
+                                "type": "bool"
+                            }
+                        ],
+                        "depends_on": null,
+                        "help": "This option allows configuring which input sequence on UART produces\na newline ('\\n', LF) on stdin.\nThree options are possible:\n\nCRLF: CRLF is converted to LF\n\nLF: no modification is applied, input is sent to stdin as is\n\nCR: each occurence of CR is replaced with LF\n\nThis option doesn't affect behavior of the UART driver (drivers/uart.h).",
+                        "id": "component-config-newlib-line-ending-for-uart-input",
+                        "name": "NEWLIB_STDIN_LINE_ENDING",
+                        "title": "Line ending for UART input",
+                        "type": "choice"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "ESP32 ROM contains parts of newlib C library, including printf/scanf family\nof functions. These functions have been compiled with so-called \"nano\"\nformatting option. This option doesn't support 64-bit integer formats and C99\nfeatures, such as positional arguments.\n\nFor more details about \"nano\" formatting option, please see newlib readme file,\nsearch for '--enable-newlib-nano-formatted-io':\nhttps://sourceware.org/newlib/README\n\nIf this option is enabled, build system will use functions available in\nROM, reducing the application binary size. Functions available in ROM run\nfaster than functions which run from flash. Functions available in ROM can\nalso run when flash instruction cache is disabled.\n\nIf you need 64-bit integer formatting support or C99 features, keep this\noption disabled.",
+                        "id": "NEWLIB_NANO_FORMAT",
+                        "name": "NEWLIB_NANO_FORMAT",
+                        "range": null,
+                        "title": "Enable 'nano' formatting options for printf/scanf family",
+                        "type": "bool"
+                    }
+                ],
+                "depends_on": null,
+                "id": "component-config-newlib",
+                "title": "Newlib",
+                "type": "menu"
+            },
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [],
                                 "depends_on": "SPI_FLASH_VERIFY_WRITE",
                                 "help": "If this option is enabled, if SPI flash write verification fails then a log error line\nwill be written with the address, expected & actual values. This can be useful when\ndebugging hardware SPI flash problems.",
                                 "id": "SPI_FLASH_LOG_FAILED_WRITE",
@@ -3577,11 +4053,21 @@
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "Enable this flag to use patched versions of SPI flash ROM driver functions.\nThis option is needed to write to flash on ESP32-D2WD, and any configuration\nwhere external SPI flash is connected to non-default pins.",
+                        "help": "Enable this flag to use patched versions of SPI flash ROM driver functions.\nThis option should be enabled, if any one of the following is true: (1) need to write\nto flash on ESP32-D2WD; (2) main SPI flash is connected to non-default pins; (3) main\nSPI flash chip is manufactured by ISSI.",
                         "id": "SPI_FLASH_ROM_DRIVER_PATCH",
                         "name": "SPI_FLASH_ROM_DRIVER_PATCH",
                         "range": null,
                         "title": "Enable SPI flash ROM driver patched functions",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32S3 || IDF_TARGET_ESP32C3",
+                        "help": "Enable this flag to use new SPI flash driver functions from ROM instead of ESP-IDF.\n\nIf keeping this as \"n\" in your project, you will have less free IRAM.\nBut you can use all of our flash features.\n\nIf making this as \"y\" in your project, you will increase free IRAM.\nBut you may miss out on some flash features and support for new flash chips.\n\nCurrently the ROM cannot support the following features:\n\n- SPI_FLASH_AUTO_SUSPEND (C3, S3)",
+                        "id": "SPI_FLASH_ROM_IMPL",
+                        "name": "SPI_FLASH_ROM_IMPL",
+                        "range": null,
+                        "title": "Use esp_flash implementation in ROM",
                         "type": "bool"
                     },
                     {
@@ -3636,6 +4122,16 @@
                     },
                     {
                         "children": [],
+                        "depends_on": "!SPI_FLASH_USE_LEGACY_IMPL && !IDF_TARGET_ESP32S2",
+                        "help": "Each SPI bus needs a lock for arbitration among devices. This allows multiple\ndevices on a same bus, but may reduce the speed of esp_flash driver access to the\nmain flash chip.\n\nIf you only need to use esp_flash driver to access the main flash chip, disable\nthis option, and the lock will be bypassed on SPI1 bus. Otherwise if extra devices\nare needed to attach to SPI1 bus, enable this option.",
+                        "id": "SPI_FLASH_SHARE_SPI1_BUS",
+                        "name": "SPI_FLASH_SHARE_SPI1_BUS",
+                        "range": null,
+                        "title": "Support other devices attached to SPI1 bus",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
                         "depends_on": null,
                         "help": "Some flash chips can have very high \"max\" erase times, especially for block erase (32KB or 64KB).\nThis option allows to bypass \"block erase\" and always do sector erase commands.\nThis will be much slower overall in most cases, but improves latency for other code to run.",
                         "id": "SPI_FLASH_BYPASS_BLOCK_ERASE",
@@ -3663,7 +4159,7 @@
                                 "id": "SPI_FLASH_ERASE_YIELD_TICKS",
                                 "name": "SPI_FLASH_ERASE_YIELD_TICKS",
                                 "range": null,
-                                "title": "CPU release time (tick)",
+                                "title": "CPU release time (tick) for an erase operation",
                                 "type": "int"
                             }
                         ],
@@ -3673,6 +4169,49 @@
                         "name": "SPI_FLASH_YIELD_DURING_ERASE",
                         "range": null,
                         "title": "Enables yield operation during flash erase",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "IDF_TARGET_ESP32C3 && !SPI_FLASH_USE_LEGACY_IMPL && !SPI_FLASH_ROM_IMPL",
+                        "help": "This option is default n before ESP32-C3, because it needs bootloader support.\n\nCAUTION: If you want to OTA to an app with this feature turned on, please make\nsure the bootloader has the support for it. (later than IDF v4.3)\n\nAuto-suspend feature is only supported by XMC chip.\nIf you are using an official module, please contact Espressif Business support.\nAlso reading auto suspend part in `SPI Flash API` document before you enable this function.",
+                        "id": "SPI_FLASH_AUTO_SUSPEND",
+                        "name": "SPI_FLASH_AUTO_SUSPEND",
+                        "range": null,
+                        "title": "Auto suspend long erase/write operations (READ DOCS FIRST)",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "Flash write is broken down in terms of multiple (smaller) write operations.\nThis configuration options helps to set individual write chunk size, smaller\nvalue here ensures that cache (and non-IRAM resident interrupts) remains\ndisabled for shorter duration.",
+                        "id": "SPI_FLASH_WRITE_CHUNK_SIZE",
+                        "name": "SPI_FLASH_WRITE_CHUNK_SIZE",
+                        "range": [
+                            256,
+                            8192
+                        ],
+                        "title": "Flash write chunk size",
+                        "type": "int"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "SPI Flash driver uses the flash size configured in bootloader header by default.\nEnable this option to override flash size with latest ESPTOOLPY_FLASHSIZE value from\nthe app header if the size in the bootloader header is incorrect.",
+                        "id": "SPI_FLASH_SIZE_OVERRIDE",
+                        "name": "SPI_FLASH_SIZE_OVERRIDE",
+                        "range": null,
+                        "title": "Override flash size in bootloader header by ESPTOOLPY_FLASHSIZE",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": "!SPI_FLASH_USE_LEGACY_IMPL",
+                        "help": "This option is helpful if you are using a flash chip whose timeout is quite large or unpredictable.",
+                        "id": "SPI_FLASH_CHECK_ERASE_TIMEOUT_DISABLED",
+                        "name": "SPI_FLASH_CHECK_ERASE_TIMEOUT_DISABLED",
+                        "range": null,
+                        "title": "Flash timeout checkout disabled",
                         "type": "bool"
                     },
                     {
@@ -3690,11 +4229,41 @@
                             {
                                 "children": [],
                                 "depends_on": null,
+                                "help": "Enable this to support auto detection of MXIC chips if chip vendor not directly\ngiven by ``chip_drv`` member of the chip struct. This adds support for variant\nchips, however will extend detecting time.",
+                                "id": "SPI_FLASH_SUPPORT_MXIC_CHIP",
+                                "name": "SPI_FLASH_SUPPORT_MXIC_CHIP",
+                                "range": null,
+                                "title": "MXIC",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
                                 "help": "Enable this to support auto detection of GD (GigaDevice) chips if chip vendor not\ndirectly given by ``chip_drv`` member of the chip struct. If you are using Wrover\nmodules, please don't disable this, otherwise your flash may not work in 4-bit\nmode.\n\nThis adds support for variant chips, however will extend detecting time and image\nsize. Note that the default chip driver supports the GD chips with product ID\n60H.",
                                 "id": "SPI_FLASH_SUPPORT_GD_CHIP",
                                 "name": "SPI_FLASH_SUPPORT_GD_CHIP",
                                 "range": null,
                                 "title": "GigaDevice",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": null,
+                                "help": "Enable this to support auto detection of Winbond chips if chip vendor not directly\ngiven by ``chip_drv`` member of the chip struct. This adds support for variant\nchips, however will extend detecting time.",
+                                "id": "SPI_FLASH_SUPPORT_WINBOND_CHIP",
+                                "name": "SPI_FLASH_SUPPORT_WINBOND_CHIP",
+                                "range": null,
+                                "title": "Winbond",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "!IDF_TARGET_ESP32",
+                                "help": "Enable this to support auto detection of BOYA chips if chip vendor not directly\ngiven by ``chip_drv`` member of the chip struct. This adds support for variant\nchips, however will extend detecting time.",
+                                "id": "SPI_FLASH_SUPPORT_BOYA_CHIP",
+                                "name": "SPI_FLASH_SUPPORT_BOYA_CHIP",
+                                "range": null,
+                                "title": "BOYA",
                                 "type": "bool"
                             }
                         ],
@@ -3702,6 +4271,16 @@
                         "id": "component-config-spi-flash-driver-auto-detect-flash-chips",
                         "title": "Auto-detect flash chips",
                         "type": "menu"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "This option enables flash read/write operations to encrypted partition/s. This option\nis kept enabled irrespective of state of flash encryption feature. However, in case\napplication is not using flash encryption feature and is in need of some additional\nmemory from IRAM region (~1KB) then this config can be disabled.",
+                        "id": "SPI_FLASH_ENABLE_ENCRYPTED_READ_WRITE",
+                        "name": "SPI_FLASH_ENABLE_ENCRYPTED_READ_WRITE",
+                        "range": null,
+                        "title": "Enable encrypted partition read/write operations",
+                        "type": "bool"
                     }
                 ],
                 "depends_on": null,
