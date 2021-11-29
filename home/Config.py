@@ -12,5 +12,5 @@ CloudClientConfig = {
     "client_id": "HubCloud",
     "host": "54.151.114.117", 
     "port": 1883,
-    "initialTopics": [("server/control/#", 0)]
+    "initialTopics": [("server/control/MYFIRSTHUB001/#", 0)]
 }

@@ -46,13 +46,15 @@ def handle_mqtt_message(client, userdata, message):
 
 @app.route("/unlock", methods=['POST'])
 def unlock():
-    mqtt.publish("server/control/lock", "u")
-    dataObj = json.loads(request.data)
-    user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
-    devices = json.loads(user.devices)
     
+    dataObj = json.loads(request.data)
+
     hub_name = dataObj["hub_name"]
     device_name = dataObj["device_name"]
+    mqtt.publish("server/control/" + hub_name + "/lock", device_name + "&u")
+    
+    user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
+    devices = json.loads(user.devices)
     
     deviceStatus = devices[hub_name][device_name]
     deviceStatus["status"] = "off"
@@ -65,13 +67,15 @@ def unlock():
 
 @app.route("/lock", methods=['POST'])
 def lock():
-    mqtt.publish("server/control/lock", "l")
-    dataObj = json.loads(request.data)
-    user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
-    devices = json.loads(user.devices)
 
+    dataObj = json.loads(request.data)
+    
     hub_name = dataObj["hub_name"]
     device_name = dataObj["device_name"]
+    mqtt.publish("server/control/" + hub_name + "/lock", device_name + "&l")
+    
+    user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
+    devices = json.loads(user.devices)
     
     deviceStatus = devices[hub_name][device_name]
     deviceStatus["status"] = "off"
