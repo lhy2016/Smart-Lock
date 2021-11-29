@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask.globals import session
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -49,10 +50,17 @@ def unlock():
     dataObj = json.loads(request.data)
     user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
     devices = json.loads(user.devices)
+    
     hub_name = dataObj["hub_name"]
     device_name = dataObj["device_name"]
+    
     deviceStatus = devices[hub_name][device_name]
-    print(deviceStatus)
+    deviceStatus["status"] = "off"
+    devices[hub_name][device_name] = deviceStatus
+
+    user.devices = json.dumps(devices)
+    session.commit()
+    
     return json.dumps({"success": True}), 200
 
 @app.route("/lock", methods=['POST'])
@@ -61,10 +69,17 @@ def lock():
     dataObj = json.loads(request.data)
     user = User.query.filter_by(id=dataObj["user_id"]).all()[0]
     devices = json.loads(user.devices)
+
     hub_name = dataObj["hub_name"]
     device_name = dataObj["device_name"]
+    
     deviceStatus = devices[hub_name][device_name]
-    print(deviceStatus)
+    deviceStatus["status"] = "off"
+    devices[hub_name][device_name] = deviceStatus
+
+    user.devices = json.dumps(devices)
+    session.commit()
+
     return json.dumps({"success": True}), 200
 
 
